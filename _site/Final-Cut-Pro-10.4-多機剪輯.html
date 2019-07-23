@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="generator" content="Jekyll">
+
+  <title>Final cut pro 10.4 多機剪輯</title>
+
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link href="/atom.xml" type="application/atom+xml" rel="alternate" title="ATOM Feed" /> <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Final cut pro 10.4 多機剪輯 | Share Knowledge</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Final cut pro 10.4 多機剪輯" />
+<meta name="author" content="SomeHacker" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="介紹多個鏡頭的剪輯，以演唱會的剪輯經驗為例，你將會學到所需要的技巧。" />
+<meta property="og:description" content="介紹多個鏡頭的剪輯，以演唱會的剪輯經驗為例，你將會學到所需要的技巧。" />
+<link rel="canonical" href="http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF" />
+<meta property="og:url" content="http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF" />
+<meta property="og:site_name" content="Share Knowledge" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-07-24T00:00:00+08:00" />
+<script type="application/ld+json">
+{"description":"介紹多個鏡頭的剪輯，以演唱會的剪輯經驗為例，你將會學到所需要的技巧。","author":{"@type":"Person","name":"SomeHacker"},"@type":"BlogPosting","url":"http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF","headline":"Final cut pro 10.4 多機剪輯","dateModified":"2019-07-24T00:00:00+08:00","datePublished":"2019-07-24T00:00:00+08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+  <div>
+    <a href="/">
+    
+    <h1>srhuang@home:~$</h1>
+    </a>
+    <div class="header-links">
+      <a href="/archive"><h2 class="header-link">Archive</h2></a>
+<a href="/about"><h2 class="header-link">About</h2></a>
+<a href="/atom.xml"><h2 class="header-link">RSS</h2></a>
+    </div>
+  </div>
+</header>
+    <div class="container">
+      <section id="main_content">
+        <article>
+  <h2>Final cut pro 10.4 多機剪輯</h2>
+  <time datetime="2019-07-24T00:00:00+08:00" class="by-line">24 Jul 2019</time>
+  <p>介紹多個鏡頭的剪輯，以演唱會的剪輯經驗為例，你將會學到所需要的技巧。</p>
+
+<!-- more -->
+
+<p><a href="#工作環境">工作環境</a>
+<a href="#素材整理">素材整理</a>
+<a href="#鏡頭粗剪">鏡頭粗剪</a>
+<a href="#畫面處理">畫面處理</a>
+<a href="#特效處理">特效處理</a>
+<a href="#輸出檔案">輸出檔案</a>
+<a href="#片尾處理">片尾處理</a>
+<a href="#字幕工程">字幕工程</a></p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/siJhGhVdPGo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h1 id="工作環境">工作環境</h1>
+<p>在開始之前，先介紹我的軟硬體設備以及作業流程 SOP。</p>
+
+<p>軟硬體設備參考：</p>
+
+<ul>
+  <li>硬體：MacBook Pro 13，CPU 2.4G i5，Memory 8G。</li>
+  <li>作業系統：MAC OS Mojave 10.14.5</li>
+  <li>軟體：FCP 10.4</li>
+  <li>外接 256 GB SSD (主要 FCP Library 會跑在上面，由於只有剪輯影片時才需要額外這麼大的空間，所以其實不需要升級 MacBook 的空間，有需要再外接 SSD 就好了，可以省一點錢XD)</li>
+  <li>外接 1 TB HDD (主要存放搜集來的素材，以及匯出最後的影片，這部分是容量需求，而非速度。)</li>
+</ul>
+
+<p>每個人的作業流程可能都不太一樣，你也不一定要跟我一樣，最重要的是如何建立屬於自己的 SOP。</p>
+
+<p>剪輯SOP參考：</p>
+
+<ol>
+  <li>搜集素材檔案放到 1 TB 的 HDD。</li>
+  <li>New Library on SSD。</li>
+  <li>New Project。</li>
+  <li>New Keyword Collection</li>
+  <li>Import Media：選擇 <strong>Proxy media</strong> (Proxy media 負責低流量；Optimized media 負責高畫質)。</li>
+  <li>開始剪輯</li>
+  <li>輸出影片：
+    <ul>
+      <li>View —&gt; Optimized/Original</li>
+      <li>File —&gt; Share —&gt; Master File</li>
+      <li>Setting —&gt; Video Codec : ProRes 422 LT or ProRes 422</li>
+    </ul>
+  </li>
+</ol>
+
+<p>由於演唱會的影片太長了，為了更專注在每個畫面，所以採用 divide and conquer 的方式一首歌一首歌慢慢的剪輯，然後再利用疊加的方式慢慢合併成最後的演唱會影片，除了可以減少一次 import 過大的檔案外，也可以設立多個 milestone，以防止剪輯過程出了什麼差錯而需要全部重來，這種狀況真的會讓人崩潰啊～</p>
+
+<h1 id="素材整理">素材整理</h1>
+<p>第一步當然是先搜集所有素材，越齊全越好，所以HDD的容量就很重要，至少要 1 TB 才能裝得下所有影音素材啊！我之前會把素材都放在 HDD，然後再 import media，但後來發現如果 SSD的容量許可的話可以直接 copy 所有素材到 SSD 上面直接剪輯也不錯，這時候 HDD 上面的素材就成了備份，以防 SSD 上面的素材出了什麼差錯，畢竟這些素材都是很珍貴的啊！</p>
+
+<ul>
+  <li><em>影片合併</em>：由於這次素材被分割成多個 2 GB 大小的檔案，因此如果要剪輯的目標歌曲片段被分割成兩個檔案，則需要先合併檔案，否則等等做影音同步的時候會發生無止盡的等待，因為他會找不到這兩個連續的檔案，相同的 audio pattern，相信我，我曾經等了一個晚上，四個小時。</li>
+  <li><em>素材分類</em>：按照上面的 SOP 將素材 import 進來後，我利用四機或是五機的名稱作為 keyword collection 的名稱：觀眾、center、left、right、動態。</li>
+  <li><em>片段選取</em>：選取五機的目標歌曲片段，並且加上 keyword 。</li>
+  <li><em>同步處理</em>：如果是多機影片，但是同一時間只想出現其中一機的畫面的話，選取「New Multicam Clip」。如果想要同一時間出現多機畫面的話，選取「Synchronize Clips」。</li>
+</ul>
+
+<h1 id="鏡頭粗剪">鏡頭粗剪</h1>
+
+<h1 id="畫面處理">畫面處理</h1>
+
+<h1 id="特效處理">特效處理</h1>
+
+<h1 id="輸出檔案">輸出檔案</h1>
+
+<h1 id="片尾處理">片尾處理</h1>
+
+<h1 id="字幕工程">字幕工程</h1>
+
+
+</article>
+      </section>
+    </div>
+  </div>
+
+   <footer>
+  <a href="https://creativecommons.org/licenses/by-nc/3.0/deed.en_US">
+    <span>
+        <b>srhuang</b>
+    </span>
+    
+    <span>© 2019</span>
+  </a>
+</footer>
+
+  
+</body>
+
+</html>

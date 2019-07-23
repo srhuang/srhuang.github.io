@@ -144,6 +144,17 @@ ul li {
   list-style-image:url('../assets/bullet.png');
 }
 
+strong {
+  color: #FF0000;
+  font-weight: bold;
+}
+
+em {
+  color: #FFFF00;
+  font-style: normal;
+  font-weight: bold;
+}
+
 blockquote {
   color: $blockquote-color;
   padding-left: 10px;
