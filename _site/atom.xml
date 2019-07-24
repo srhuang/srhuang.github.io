@@ -12,8 +12,8 @@
     </author>
     
       <item>
-        <title>Final cut pro 10.4 多機剪輯</title>
-        <description>&lt;p&gt;介紹多個鏡頭的剪輯，以演唱會的剪輯經驗為例，你將會學到所需要的技巧。&lt;/p&gt;
+        <title>Final Cut Pro 10.4 多機剪輯</title>
+        <description>&lt;p&gt;介紹多個鏡頭的剪輯，搭配之前的剪輯 SOP，你將會看到我如何完成這次的演唱會影片，只能說是這根本是自虐的過程。這篇文章不在於教學，主要是分享整個過程，進而了解為何剪支影片需要兩三個禮拜的時間。&lt;/p&gt;
 
 &lt;!-- more --&gt;
 
@@ -87,9 +87,9 @@
 
 </description>
         <pubDate>Wed, 24 Jul 2019 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000//Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF</link>
-        <link href="http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF"/>
-        <guid isPermaLink="true">http://localhost:4000/Final-Cut-Pro-10.4-%E5%A4%9A%E6%A9%9F%E5%89%AA%E8%BC%AF</guid>
+        <link>http://localhost:4000//fcp/FCP-Multicam/</link>
+        <link href="http://localhost:4000/fcp/FCP-Multicam/"/>
+        <guid isPermaLink="true">http://localhost:4000/fcp/FCP-Multicam/</guid>
       </item>
     
   </channel>
