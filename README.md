@@ -1,109 +1,168 @@
-# The Hacker-Blog theme
+# Hydeout
 
-*Hacker-Blog is a minimalistic, responsive jekyll theme built for hackers. It is based on the [hacker theme](https://github.com/pages-themes/hacker) for project pages.*
+Hydeout updates the original [Hyde](https://github.com/poole/hyde)
+theme for [Jekyll](http://jekyllrb.com) 3.x and adds new functionality.
 
-Demo: [https://ashishchaudhary.in/hacker-blog](https://ashishchaudhary.in/hacker-blog)
+![Desktop](/_screenshots/1.png?raw=true)
+<img alt="Mobile home page" src="/_screenshots/2.png?raw=true" width="300px" />
+<img alt="Mobile post page" src="/_screenshots/3.png?raw=true" width="300px" />
 
-### Included
+### Usage
 
-1. Pagination
-2. SEO tags
-3. Archive Page
-4. RSS
-5. Sitemap 
+Hydeout is available as the `jekyll-theme-hydeout` Ruby Gem.
+Add `gem "jekyll-theme-hydeout", "~> 3.4"` to your Gemfile and run
+`bundle install`.
 
-## Usage
+If you're installing on Github pages, you may also have to add
+`remote_theme: fongandrew/hydeout` to your `_config.yml`. [See the Github
+instructions for more details.](https://help.github.com/articles/adding-a-jekyll-theme-to-your-github-pages-site/)
 
-1. Fork and Clone this repository
-2. Customize your blog
-3. Add a new post in `_posts/` directory with proper name format (as shown in placeholder posts)
-4. Commit and push to master 
+Hydeout uses pagination, so if you have an `index.md`, you'll need to swap
+it with an `index.html` that uses the `index` layout:
 
-## Local Build
-
-If you want to see the changes before pushing the blog to Github, do a local build.
-
-1. [`gem install jekyll`](https://jekyllrb.com/docs/installation/#install-with-rubygems)
-2. `gem install jekyll-seo-tag`
-3. (`cd` to the blog directory, then:) `jekyll serve --watch --port 8000`
-4. Go to `http://0.0.0.0:8000/` in your web browser.
-
-*Note: In case you have set a `baseurl` different than `/` in `_config.yml`, go to `http://0.0.0.0:8000/BASEURL/` instead.*
-
-### Local build using docker
-
-```bash
-docker run --rm -p 8000:8000 \
-  --volume="LOCATION_OF_YOUR_JEKYLL_BLOG:/srv/jekyll" \
-  -it tocttou/jekyll:3.5 \
-  jekyll serve --watch --port 8000
+```
+---
+layout: index
+title: Home
+---
 ```
 
-Replace `LOCATION_OF_YOUR_JEKYLL_BLOG` with the full path of your blog repository. Visit `http://localhost:8000/` to access the blog.
+You'll also need to add a setting to `_config.yml` telling Jekyll how many posts
+to include per page (e.g. `paginate: 5`).
 
-*Note: In case you have set a `baseurl` different than `/` in `_config.yml`, go to `http://0.0.0.0:8000/BASEURL/` instead.*
+### Keep It Simple
 
-## Customizing
+In keeping with the original Hyde theme, Hydeout aims to keep the overall
+design lightweight and plugin-free. JavaScript is currently limited only
+to Disqus and Google Analytics (and is only loaded if you provide configuration
+variables).
 
-### Configuration variables
+Hydeout makes heavy use of Flexbox in its CSS. If Flexbox is not available,
+the CSS degrades into a single column layout.
 
-Edit the `_config.yml` file and set the following variables:
+### Customization
 
-```yml
-title: [The title of your blog]
-description: [A short description of your blog's purpose]
-author:
-  name: [Your name]
-  email: [Your email address]
-  url: [URL of your website]
+Hydeout replaces Hyde's class-based theming with the use
+of the following SASS variables:
 
-baseurl: [The base url for this blog.]
-
-paginate: [Number of posts in one paginated section (default: 3)]
-owner: [Your name]
-year: [Current Year]
+```scss
+$sidebar-bg-color: #202020 !default;
+$sidebar-fg-color: white !default;
+$sidebar-sticky: true !default;
+$layout-reverse: false !default;
+$link-color: #268bd2 !default;
 ```
 
-*Note: All links in the site are prepended with `baseurl`. Default `baseurl` is `/`. Any other baseurl can be setup like `baseurl: /hacker-blog`, which makes the site available at `http://domain.name/hacker-blog`.*
+To override these variables, create your own `assets/css/main.scss` file.
+Define your own variables, then import in Hydeout's SCSS, like so:
 
-Additionally, you may choose to set the following optional variables:
+```scss
+---
+# Jekyll needs front matter for SCSS files
+---
 
-```yml
-google_analytics: [Your Google Analytics tracking ID]
+$sidebar-bg-color: #ac4142;
+$link-color: #ac4142;
+$sidebar-sticky: false;
+@import "hydeout";
 ```
 
-### About Page
+See the [_variables](_sass/hydeout/_variables.scss) file for other variables
+you can override.
 
-Edit `about.md`
+You can see the full set of partials you can replace in the
+[`_includes`](_includes) folder, but there are a few worth noting:
 
-### Layout
+* `_includes/copyright.html` - Insert your own copyright here.
 
-If you would like to modify the site style:
+* `_includes/custom-head.html` - Insert custom head tags (e.g. to load your
+  own stylesheets)
 
-**HTML**
+* `_includes/custom-foot.html` - Insert custom elements at the end of the
+  body (e.g. for custom JS)
 
-Footer: Edit `_includes/footer.html`
+* `_includes/custom-nav-links.html` - Additional nav links to insert at the
+  end of the list of links in the sidebar.
 
-Header: Edit `_includes/header.html`
+  Pro-tip: The `nav`s in the sidebar are flexboxes. Use the `order` property
+  to order your links.
 
-Links in the header: Edit `_includes/links.html`
+* `_includes/custom-icon-links.html`- Additional icon links to insert at the
+  end of the icon links at the bottom of the sidebar. You can use the `order`
+  property to re-order.
 
-Meta tags, blog title display, and additional CSS: Edit `_includes/head.html`
+* `_includes/favicons.html` - Replace references to `favicon.ico` and
+  `favicon.png` with your own favicons references.
 
-Index page layout: Edit `_layouts/default.html`
+* `_includes/font-includes.html` - The Abril Fatface font used for the site
+  title is loaded here. If you're overriding that font in the CSS, be sure
+  to also remove the font load reference here.
 
-Post layout: Edit `_layouts/post.html`
+### New Features
 
-**CSS**
+* Hydeout adds a new tags page (accessible in the sidebar). Just create a
+  new page with the tags layout:
 
-Site wide CSS: Edit `_sass/base.scss`
+  ```
+  ---
+  layout: tags
+  title: Tags
+  ---
+  ```
 
-Custom CSS: Make `_sass/custom.scss` and use it. Then add `@import "custom";` to `css/main.scss`
+* Hydeout adds a new "category" layout for dedicated category pages.
+  Category pages are automatically added to the sidebar. All other pages
+  must have `sidebar_link: true` in their front matter to show up in
+  the sidebar. To create a category page, use the `category` layout"
 
-**404 page**
+  ```
+  ---
+  layout: category
+  title: My Category
+  ---
 
-Edit `404.md`
+  Description of "My Category"
+  ```
 
-## License
+* You can control how pages are sorted by using the `sidebar_sort_order`
+  parameter in the front matter. This works for both category and non-category
+  pages, although non-category pages will always come first. Take a look at
+  [`_includes/sidebar-nav-links.html`](./_includes/sidebar-nav-links.html) if
+  you want to customize this behavior.
 
-CC0 1.0 Universal
+  ```
+  ---
+  layout: page
+  title: My page
+  sidebar_sort_order: 123
+  ---
+
+  Some content.
+  ```
+
+* A simple redirect-to-Google search is available. Just create a page with
+  the `search` layout.
+
+  ```
+  ---
+  layout: search
+  title: Google Search
+  ---
+  ```
+
+* Disqus integration is ready out of the box. Just add the following to
+  your config file:
+
+  ```yaml
+  disqus:
+    shortname: my-disqus-shortname
+  ```
+
+  If you don't want Disqus or want to use something else, override
+  `comments.html`.
+
+* For Google Analytics support, define a `google_analytics` variable with
+  your property ID in your config file.
+
+There's also a bunch of minor tweaks and adjustments throughout the
+theme. Hope this works for you!
