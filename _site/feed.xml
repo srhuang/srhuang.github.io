@@ -1,12 +1,77 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-12T13:21:22+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">Markup: Title *with* **Markdown**</title><link href="http://localhost:4000/system%20software/2019/09/12/formal-language.html" rel="alternate" type="text/html" title="Markup: Title *with* **Markdown**" /><published>2019-09-12T00:00:00+08:00</published><updated>2019-09-12T00:00:00+08:00</updated><id>http://localhost:4000/system%20software/2019/09/12/formal-language</id><content type="html" xml:base="http://localhost:4000/system%20software/2019/09/12/formal-language.html">&lt;p&gt;Using Markdown in the title should have no adverse effect on the layout or 
-functionality.這是測試&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-12T17:28:30+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">Formal Language (形式語言)</title><link href="http://localhost:4000/formal%20language/2019/09/12/formal-language.html" rel="alternate" type="text/html" title="Formal Language (形式語言)" /><published>2019-09-12T00:00:00+08:00</published><updated>2019-09-12T00:00:00+08:00</updated><id>http://localhost:4000/formal%20language/2019/09/12/formal-language</id><content type="html" xml:base="http://localhost:4000/formal%20language/2019/09/12/formal-language.html">&lt;p&gt;這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F&quot;&gt;ENIAC&lt;/a&gt; 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「&lt;a href=&quot;https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80&quot;&gt;形式語言&lt;/a&gt;」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？&lt;/p&gt;
 
 &lt;!--more--&gt;
-&lt;p&gt;fffff
-ffff
-ffff&lt;/p&gt;
 
-&lt;p&gt;ffff&lt;/p&gt;</content><author><name>srhuang</name></author><category term="css" /><category term="html" /><category term="title" /><summary type="html">Using Markdown in the title should have no adverse effect on the layout or functionality.這是測試</summary></entry><entry><title type="html">學徒筆記</title><link href="http://localhost:4000/2019/09/11/hello.html" rel="alternate" type="text/html" title="學徒筆記" /><published>2019-09-11T00:00:00+08:00</published><updated>2019-09-11T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/11/hello</id><content type="html" xml:base="http://localhost:4000/2019/09/11/hello.html">&lt;p&gt;Hydeout updates the original &lt;a href=&quot;https://github.com/poole/hyde&quot;&gt;Hyde&lt;/a&gt;
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#Definition&quot;&gt;Definition : Languages, Grammars, Automata&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#Regular&quot;&gt;Regular Languages and DFA&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Context-Free Languages and Pushdown Automata&lt;/li&gt;
+  &lt;li&gt;Recursively enumerable Languages and Turing Machine&lt;/li&gt;
+  &lt;li&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/li&gt;
+  &lt;li&gt;The Chomsky Hierarchy&lt;/li&gt;
+  &lt;li&gt;Others&lt;/li&gt;
+  &lt;li&gt;Computational Complexity&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;why-we-study-formal-language-theory&quot;&gt;Why we study formal language theory?&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;theory provides concepts and principles that help us understand the general nature of the discipline.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;學習理論讓我們知道計算機科學的最核心的概念和原則，進而了解電腦的極限，而不用透過無意義的 trial-and-error 以及猜測來理解電腦，以更高的角度來看待計算機科學。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;the ideas we will discuss have some immediate and important applications.e.g. digital design, programming languages, and compilers.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;就實作面來說，formal language 是 compiler 的理論基礎，因為 compiler 就是在處理語言和字串，本質上和 formal language 所探討的問題是一致的；programming languages 核心的概念也是把人類理解的語言，轉成機器可以執行的語言，不論高階語言還是低階語言，本質上都是處理語言和字串的轉換。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;the subject matter is intellectually stimulating and fun.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。&lt;/p&gt;
+
+&lt;h2 id=&quot;definition--languages-grammars-automata&quot;&gt;&lt;a id=&quot;Definition&quot;&gt;&lt;/a&gt;Definition : Languages, Grammars, Automata&lt;/h2&gt;
+&lt;p&gt;在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。
+Languages 是一個數學上的字串集合；這些字串集合的 derivation rules 就稱為 Grammars；而設計一個自動機來決定給定的字串是否屬於該集合則稱為 Accepter (Automata 的一種)。&lt;/p&gt;
+
+&lt;p&gt;Languages 的例子：
+&lt;script type=&quot;math/tex&quot;&gt;L_1=\{ a^nb^n : n \geq 0 \}&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Automata 基本上分為兩種：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Accepter : output response is limited to a simple “yes” or “no”.&lt;/li&gt;
+  &lt;li&gt;Transducer : producing strings of symbols as output.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Grammars 是用數學嚴謹的定義來描述 language：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;variables (V) : finite set.&lt;/li&gt;
+  &lt;li&gt;terminal symbols (T) : finite set.&lt;/li&gt;
+  &lt;li&gt;start variable (S) : special symbol.&lt;/li&gt;
+  &lt;li&gt;productions (P) : which used to derives the strings.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_1 = (\{A,S\},\{a,b\},S,P_1)\ with\ P_1\ consisting\ of\ the\ productions \\
+S \to aAb|\lambda \\
+A \to aAb|\lambda&lt;/script&gt;
+
+&lt;p&gt;這個 Grammar 其實就是 Language 那個例子的 Grammar，所以 &lt;script type=&quot;math/tex&quot;&gt;L(G_1) = L_1&lt;/script&gt;。&lt;/p&gt;
+
+&lt;h2 id=&quot;regular-languages-and-dfa&quot;&gt;&lt;a id=&quot;Regular&quot;&gt;&lt;/a&gt;Regular Languages and DFA&lt;/h2&gt;
+
+&lt;h2 id=&quot;resource&quot;&gt;Resource&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;An Introduction to Formal Language and Automata (Peter Linz)&lt;/li&gt;
+  &lt;li&gt;Introduction to Automata Theory, Languages, and Computation (Hopcroft, Motwani, Ullman)&lt;/li&gt;
+  &lt;li&gt;Introduction to the Theory of Computation (Michael Sipser)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mropengate.blogspot.com/2015/06/formal-language.html&quot;&gt;正規語言Formal Language | Mr. Opengate
+&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&quot;&gt;Theory of Computation &amp;amp; Automata Theory&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>srhuang</name></author><category term="theory" /><category term="mathematics" /><summary type="html">這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。 Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 ENIAC 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「形式語言」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？</summary></entry><entry><title type="html">學徒筆記</title><link href="http://localhost:4000/2019/09/11/hello.html" rel="alternate" type="text/html" title="學徒筆記" /><published>2019-09-11T00:00:00+08:00</published><updated>2019-09-11T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/11/hello</id><content type="html" xml:base="http://localhost:4000/2019/09/11/hello.html">&lt;p&gt;Hydeout updates the original &lt;a href=&quot;https://github.com/poole/hyde&quot;&gt;Hyde&lt;/a&gt;
 theme for &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll&lt;/a&gt; 3.x and adds new functionality.&lt;/p&gt;
 
 &lt;h3 id=&quot;keep-it-simple&quot;&gt;Keep It Simple&lt;/h3&gt;

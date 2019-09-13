@@ -11,7 +11,7 @@
 
   <title>
     
-      Markup: Title *with* **Markdown** &middot; 學徒筆記
+      Formal Language (形式語言) &middot; 學徒筆記
     
   </title>
 
@@ -355,7 +355,7 @@
 
     <main class="container">
       <header>
-  <h1 class="post-title">Markup: Title *with* **Markdown**</h1>
+  <h1 class="post-title">Formal Language (形式語言)</h1>
 </header>
 <div class="content">
   <div class="post-meta">
@@ -369,25 +369,113 @@
       
 
       
-        <a href="/category/System-Software.html">
-          System Software
+        <a href="/category/Formal-Language.html">
+          Formal Language
         </a>
       
     
   </span>
 </div>
 
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+>
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://vincenttam.github.io/javascripts/MathJaxLocal.js"
+>
+</script>
+
 
   <div class="post-body">
-    <p>Using Markdown in the title should have no adverse effect on the layout or 
-functionality.這是測試</p>
+    <p>這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「<a href="https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80">形式語言</a>」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？</p>
 
 <!--more-->
-<p>fffff
-ffff
-ffff</p>
 
-<p>ffff</p>
+<h2 id="overview">Overview</h2>
+<ul>
+  <li><a href="#Definition">Definition : Languages, Grammars, Automata</a></li>
+  <li><a href="#Regular">Regular Languages and DFA</a></li>
+  <li>Context-Free Languages and Pushdown Automata</li>
+  <li>Recursively enumerable Languages and Turing Machine</li>
+  <li>Context-Sensitive Languages and Linear Bounded Automata</li>
+  <li>The Chomsky Hierarchy</li>
+  <li>Others</li>
+  <li>Computational Complexity</li>
+</ul>
+
+<h2 id="why-we-study-formal-language-theory">Why we study formal language theory?</h2>
+<blockquote>
+  <p>theory provides concepts and principles that help us understand the general nature of the discipline.</p>
+</blockquote>
+
+<p>學習理論讓我們知道計算機科學的最核心的概念和原則，進而了解電腦的極限，而不用透過無意義的 trial-and-error 以及猜測來理解電腦，以更高的角度來看待計算機科學。</p>
+
+<blockquote>
+  <p>the ideas we will discuss have some immediate and important applications.e.g. digital design, programming languages, and compilers.</p>
+</blockquote>
+
+<p>就實作面來說，formal language 是 compiler 的理論基礎，因為 compiler 就是在處理語言和字串，本質上和 formal language 所探討的問題是一致的；programming languages 核心的概念也是把人類理解的語言，轉成機器可以執行的語言，不論高階語言還是低階語言，本質上都是處理語言和字串的轉換。</p>
+
+<blockquote>
+  <p>the subject matter is intellectually stimulating and fun.</p>
+</blockquote>
+
+<p>最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。</p>
+
+<h2 id="definition--languages-grammars-automata"><a id="Definition"></a>Definition : Languages, Grammars, Automata</h2>
+<p>在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。
+Languages 是一個數學上的字串集合；這些字串集合的 derivation rules 就稱為 Grammars；而設計一個自動機來決定給定的字串是否屬於該集合則稱為 Accepter (Automata 的一種)。</p>
+
+<p>Languages 的例子：
+<script type="math/tex">L_1=\{ a^nb^n : n \geq 0 \}</script></p>
+
+<p>Automata 基本上分為兩種：</p>
+<ul>
+  <li>Accepter : output response is limited to a simple “yes” or “no”.</li>
+  <li>Transducer : producing strings of symbols as output.</li>
+</ul>
+
+<p>Grammars 是用數學嚴謹的定義來描述 language：</p>
+<ul>
+  <li>variables (V) : finite set.</li>
+  <li>terminal symbols (T) : finite set.</li>
+  <li>start variable (S) : special symbol.</li>
+  <li>productions (P) : which used to derives the strings.</li>
+</ul>
+
+<script type="math/tex; mode=display">G_1 = (\{A,S\},\{a,b\},S,P_1)\ with\ P_1\ consisting\ of\ the\ productions \\
+S \to aAb|\lambda \\
+A \to aAb|\lambda</script>
+
+<p>這個 Grammar 其實就是 Language 那個例子的 Grammar，所以 <script type="math/tex">L(G_1) = L_1</script>。</p>
+
+<h2 id="regular-languages-and-dfa"><a id="Regular"></a>Regular Languages and DFA</h2>
+
+<h2 id="resource">Resource</h2>
+<ul>
+  <li>An Introduction to Formal Language and Automata (Peter Linz)</li>
+  <li>Introduction to Automata Theory, Languages, and Computation (Hopcroft, Motwani, Ullman)</li>
+  <li>Introduction to the Theory of Computation (Michael Sipser)</li>
+  <li><a href="https://mropengate.blogspot.com/2015/06/formal-language.html">正規語言Formal Language | Mr. Opengate
+</a></li>
+  <li><a href="https://www.youtube.com/playlist?list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev">Theory of Computation &amp; Automata Theory</a></li>
+</ul>
+
 
     
 
@@ -396,36 +484,25 @@ ffff</p>
 <div class="post-tags">
   
     
-    <a href="/tags.html#css">
+    <a href="/tags.html#theory">
     
       <span class="icon">
         <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0h24v24H0z" fill="none"/>
     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
 </svg>
-      </span>&nbsp;<span class="tag-name">css</span>
+      </span>&nbsp;<span class="tag-name">theory</span>
     </a>
   
     
-    <a href="/tags.html#html">
+    <a href="/tags.html#mathematics">
     
       <span class="icon">
         <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 0h24v24H0z" fill="none"/>
     <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
 </svg>
-      </span>&nbsp;<span class="tag-name">html</span>
-    </a>
-  
-    
-    <a href="/tags.html#title">
-    
-      <span class="icon">
-        <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
-</svg>
-      </span>&nbsp;<span class="tag-name">title</span>
+      </span>&nbsp;<span class="tag-name">mathematics</span>
     </a>
   
 </div>
@@ -449,7 +526,7 @@ this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your pag
 */
 (function() { // DON'T EDIT BELOW THIS LINE
 var d = document, s = d.createElement('script');
-s.src = 'https://srhuang-1.disqus.com/embed.js';
+s.src = 'https://srhuang.disqus.com/embed.js';
 s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
@@ -477,6 +554,7 @@ s.setAttribute('data-timestamp', +new Date());
 </section>
 
 </div>
+
 
     </main>
 
