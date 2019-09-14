@@ -11,7 +11,7 @@
 
   <title>
     
-      Formal Language (形式語言) &middot; 學徒筆記
+      快速了解 Formal Language (形式語言) &middot; 學徒筆記
     
   </title>
 
@@ -355,11 +355,11 @@
 
     <main class="container">
       <header>
-  <h1 class="post-title">Formal Language (形式語言)</h1>
+  <h1 class="post-title">快速了解 Formal Language (形式語言)</h1>
 </header>
 <div class="content">
   <div class="post-meta">
-  <span class="post-date">12 Sep 2019</span>
+  <span class="post-date">15 Sep 2019</span>
   <span class="post-categories">
     
       &bull;
@@ -402,7 +402,7 @@
 
   <div class="post-body">
     <p>這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
-Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「<a href="https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80">形式語言</a>」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？</p>
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。</p>
 
 <!--more-->
 
@@ -410,12 +410,12 @@ Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦�
 <ul>
   <li><a href="#Definition">Definition : Languages, Grammars, Automata</a></li>
   <li><a href="#Regular">Regular Languages and DFA</a></li>
-  <li>Context-Free Languages and Pushdown Automata</li>
-  <li>Recursively enumerable Languages and Turing Machine</li>
-  <li>Context-Sensitive Languages and Linear Bounded Automata</li>
-  <li>The Chomsky Hierarchy</li>
-  <li>Others</li>
-  <li>Computational Complexity</li>
+  <li><a href="#CFL">Context-Free Languages and Pushdown Automata</a></li>
+  <li><a href="#REL">Recursively enumerable Languages and Turing Machine</a></li>
+  <li><a href="#CSL">Context-Sensitive Languages and Linear Bounded Automata</a></li>
+  <li><a href="#Chomsky">The Chomsky Hierarchy</a></li>
+  <li><a href="#limits">Limits of Algorithmic Computation</a></li>
+  <li><a href="#complexity">Computational Complexity</a></li>
 </ul>
 
 <h2 id="why-we-study-formal-language-theory">Why we study formal language theory?</h2>
@@ -437,20 +437,36 @@ Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦�
 
 <p>最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。</p>
 
-<h2 id="definition--languages-grammars-automata"><a id="Definition"></a>Definition : Languages, Grammars, Automata</h2>
-<p>在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。
-Languages 是一個數學上的字串集合；這些字串集合的 derivation rules 就稱為 Grammars；而設計一個自動機來決定給定的字串是否屬於該集合則稱為 Accepter (Automata 的一種)。</p>
+<p>Using Formal Language :</p>
+<ul>
+  <li>definition of programming languages.</li>
+  <li>interpreters.</li>
+  <li>compilers.</li>
+</ul>
 
-<p>Languages 的例子：
+<details>
+    <summary>關於 formal language 的翻譯
+</summary>
+如果把 formal language 翻譯成「正規語言」，那 regular language 可能會不知道該如何翻譯，因此比較好的翻譯應該是「形式語言」，而「正規語言」是包含於「形式語言」。
+</details>
+
+<h2 id="definition--languages-grammars-automata"><a id="Definition"></a>Definition : Languages, Grammars, Automata</h2>
+<p>在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。</p>
+
+<p><em>Languages</em> 是一個數學上的字串集合；
+這些字串集合的 derivation rules 就稱為 <em>Grammars</em>；
+而設計一個自動機來決定給定的字串是否屬於該集合則稱為 <em>Accepter</em> (Automata 的一種)。</p>
+
+<p><strong>Languages</strong> 的例子：
 <script type="math/tex">L_1=\{ a^nb^n : n \geq 0 \}</script></p>
 
-<p>Automata 基本上分為兩種：</p>
+<p><strong>Automata</strong> 基本上分為兩種：</p>
 <ul>
   <li>Accepter : output response is limited to a simple “yes” or “no”.</li>
   <li>Transducer : producing strings of symbols as output.</li>
 </ul>
 
-<p>Grammars 是用數學嚴謹的定義來描述 language：</p>
+<p><strong>Grammars</strong> 是用數學嚴謹的定義來描述 language：</p>
 <ul>
   <li>variables (V) : finite set.</li>
   <li>terminal symbols (T) : finite set.</li>
@@ -462,9 +478,296 @@ Languages 是一個數學上的字串集合；這些字串集合的 derivation r
 S \to aAb|\lambda \\
 A \to aAb|\lambda</script>
 
-<p>這個 Grammar 其實就是 Language 那個例子的 Grammar，所以 <script type="math/tex">L(G_1) = L_1</script>。</p>
+<p>這個 Grammar 其實就是 Language $L_1$ 那個例子的 Grammar，所以 <script type="math/tex">L(G_1) = L_1</script>。</p>
 
 <h2 id="regular-languages-and-dfa"><a id="Regular"></a>Regular Languages and DFA</h2>
+<p>我們將會從最簡單的 automata 開始討論，由於接下來的 automata 都是 accepters，所以可以暫時理解 $automata=accepters$。</p>
+
+<p>Language 是一種字串的集合，關於這個集合我們會用各種角度和方式來描述它，讓它變得更加具體，其中一個就是設計一個 automata 讓所有該集合的字串都能通過該 automata(accepter)；Grammars 則是透過數學的方式來描述該 language。</p>
+
+<h3 id="finite-automata-finite-state-machine-fsm">Finite Automata (Finite State Machine, FSM)</h3>
+<ul>
+  <li>Deterministic Finite Automata (DFA) is defined by internal states, input alphabet, transition function, initial state, final states.
+    <ul>
+      <li>each move consumes one input symbol.</li>
+      <li>the string is accepted if the automaton is in one of its final states.</li>
+    </ul>
+  </li>
+  <li>Nondeterministic Finite Automata (NFA)
+    <ul>
+      <li>transition function range is a set of possible states.</li>
+      <li>can make a transition without consuming an input symbol.</li>
+      <li>there is no transition defined for the specific situation.</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>The classes of DFA and NFA are equally powerfully.</p>
+</blockquote>
+
+<h3 id="regular-language">Regular Language</h3>
+<p>A language $L$ is called regular if and only if there exists some DFA $M$ such that, $L=L(M)$.</p>
+
+<h3 id="regular-grammar">Regular Grammar</h3>
+<ul>
+  <li>A language $L$ is regular if and only if there exists a regular grammar $G$ such that $L=L(G)$.</li>
+  <li>A regular grammar is one that is either right-linear or left-linear, which there is exactly one variable occuring as the rightmost/leftmost symbol.<br />
+Right-Linear Grammars ：$A \to xB$<br />
+Left-Linear Grammars : $A \to Bx$</li>
+</ul>
+
+<h3 id="regular-expression">Regular Expression</h3>
+<ul>
+  <li>One way of describing regular language is via the notation of regular expression.</li>
+  <li>Two regular expressions are equivalent if they denote the same language.</li>
+</ul>
+
+<blockquote>
+  <p>There are three ways to describe regular languages：DFA, regular expression, regular grammars.</p>
+</blockquote>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Closure Properties of Regular Languages</li>
+  <li>membership algorithm</li>
+  <li>Identifying Nonregular Languages
+    <ul>
+        <li>Pigeonhole Principle (鴿籠原理)</li>
+        <li>Pumping Lemma</li>
+    </ul>
+  </li>
+</ul>
+</details>
+
+<h2 id="context-free-languages-and-pushdown-automata"><a id="CFL"></a>Context-Free Languages and Pushdown Automata</h2>
+<p>雖然 regular language 廣泛應用在 computer science 領域中，但是還是有很多是 regular language 無法處理的，例如我們舉的第一個例子：</p>
+
+<script type="math/tex; mode=display">L_1=\{ a^nb^n : n \geq 0 \}</script>
+
+<p>假如 $a=“(”, b=”)”$，那麼這個 language 所產生的 automata 將會是判斷 programming language 的括號是否合法的方法之一。可以想像的是，利用 finite state 將無法紀錄已經 parsing 幾個 a 了，因此我們需要更強大的 language 來處理 regular language 無法處理的 language。
+最核心的概念就是在 finite state 以外新增 storage (stack)。你將會發現「新增/修改 storage」是區別每個 language 所對應的 automata 重要的 property 之一。</p>
+
+<h3 id="context-free-grammars">Context-Free Grammars</h3>
+<ul>
+  <li>all productions in P have the form $A \to x$.</li>
+  <li>retaining the restriction on the left side, but permitting anything on the right.</li>
+</ul>
+
+<h3 id="context-free-languages">Context-Free Languages</h3>
+<ul>
+  <li>A language $L$ is said to be context-free if and only if there is a context-free grammar $G$ such that $L=L(G)$.</li>
+</ul>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Derivation Tree (Parse tree)</li>
+  <li>Sentential form of the derivation</li>
+  <li>Parsing and Ambiguity
+    <ul>
+        <li>exhaustive search parsing (brute force parsing)</li>
+        <li>Simple Grammar (s-grammar)</li>
+    </ul>
+  </li>
+  <li>Simplification of Context-Free Grammars and Normal Forms
+    <ul>
+        <li>Chomsky Normal Form : A-&gt;BC or A-&gt;a</li>
+        <li>Greibach Normal Form : A-&gt;ax</li>
+    </ul>
+  </li>
+</ul>
+</details>
+
+<h3 id="pushdown-automata">Pushdown Automata</h3>
+<ul>
+  <li>Nondeterministic Pushdown Automata (NPDA)
+    <ul>
+      <li>For any context-free language $L$, there exists an NPDA $M$ such that $L=L(M)$.</li>
+      <li>If $L=L(M)$ for some NPDA $M$, then $L$ is a context-free language.</li>
+    </ul>
+  </li>
+  <li>Deterministic Pushdown Automata (DPDA)
+    <ul>
+      <li>A language $L$ is said to be a deterministic context-free language if and only if there exists a DPDA $M$ such that $L=L(M)$.</li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>deterministic and nondeterministic pushdown automata are not equivalent.</p>
+</blockquote>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Properties of Context-Free Languages
+    <ul>
+        <li>A pumping lemma for context-free languages</li>
+        <li>Closure Properties for Context-Free Languages</li>
+    </ul>
+  </li>
+</ul>
+</details>
+
+<h2 id="recursively-enumerable-languages-and-turing-machine"><a id="REL"></a>Recursively enumerable Languages and Turing Machine</h2>
+<p>我們發現還是有 Language 不屬於 regular and context-free language</p>
+
+<script type="math/tex; mode=display">L_1=\{ a^nb^nc^n : n \geq 0 \}</script>
+
+<p>因此透過修改 storage 可以得到更 powerful 的 language : Turing Machine (Using Tapes).</p>
+
+<h3 id="turing-machine">Turing Machine</h3>
+<ul>
+  <li>Definition : associated with the tape is a read-write head that can travel right or left.</li>
+  <li>The Turing machine enters a final state and halts, then the string is considered to be accepted.</li>
+  <li>main features :
+    <ul>
+      <li>tape is unbounded in both directions.</li>
+      <li>deterministic.</li>
+      <li>no special input file / output device.</li>
+    </ul>
+  </li>
+  <li>Church Turing Thesis : 任何在算法上可計算的問題同樣可由圖靈機計算。</li>
+</ul>
+
+<h3 id="recursively-enumerable-languages">Recursively enumerable Languages</h3>
+<ul>
+  <li>A language $L$ is said to be recursively enumerable if there exists a Turing machine that accepts it.</li>
+  <li>There is an <em>enumeration procedure</em> for every recursively enumerable language.</li>
+  <li>enumeration procedure : 存在一個 algorithm 可以列出所有 strings in the language.</li>
+  <li>Recursively enumerable Languages is countable.</li>
+</ul>
+
+<h3 id="recursive-languages">Recursive Languages</h3>
+<ul>
+  <li>A language is recursive in and only if there exists a <em>membership algorithm</em> for it.</li>
+  <li>membership algorithm : 存在一個 algorithm 可以決定該 string 是否屬於 language。</li>
+  <li>If a language is recursive, then there exists an enumeration procedure.</li>
+</ul>
+
+<blockquote>
+  <ul>
+    <li>the family of recursive language is a proper subset of the family of recursively enumerable languages.</li>
+  </ul>
+</blockquote>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>這邊常用的證明方法 : diagonalization</li>
+</ul>
+</details>
+
+<h3 id="unrestricted-grammars">Unrestricted Grammars</h3>
+<ul>
+  <li>A grammar is called unrestricted if all the productions are of the form $u \to v$.</li>
+  <li>Any number of variables and terminals can be on the left or righting any order.</li>
+  <li>Any language generated by an unrestricted grammar is <em>recursively enumerable</em>.</li>
+  <li>For every recursively enumeration language $L$, there exists an unrestricted grammar $G$, such that $L=L(G)$.</li>
+</ul>
+
+<h2 id="context-sensitive-languages-and-linear-bounded-automata"><a id="CSL"></a>Context-Sensitive Languages and Linear Bounded Automata</h2>
+<p>Context-free languages，顧名思義就在 derivation 的時候並不考慮上下文，因此根據 definition，there is no terminal on the left of any production.接下來將會介紹根據上下文的 Context-Sensitive Languages。</p>
+
+<h3 id="context-sensitive-grammars">Context-Sensitive Grammars</h3>
+<ul>
+  <li>A grammar is called Context-Sensitive if all the productions are of the form $x \to y$, where <script type="math/tex">\|x\| \leq \|y\|</script>.</li>
+  <li>the length of successive sentential forms can never decrease.</li>
+</ul>
+
+<h3 id="linear-bounded-automata">Linear Bounded Automata</h3>
+<ul>
+  <li>Turing machine with limiting the tape.</li>
+  <li>For every context-sensitive language $L$ (not including empty string), there exists some linear bounded automata $M$ such that $L=L(M)$.</li>
+</ul>
+
+<h3 id="context-sensitive-languages">Context-Sensitive Languages</h3>
+<ul>
+  <li>A language $L$ is said to be context-sensitive if and only if there is a context-sensitive grammar $G$ such that $L=L(G)$.</li>
+</ul>
+
+<h2 id="the-chomsky-hierarchy"><a id="Chomsky"></a>The Chomsky Hierarchy</h2>
+<ul>
+  <li>Type 0 : recursively enumerable languages (unrestricted grammars).</li>
+  <li>Type 1 : context-sensitive language.</li>
+  <li>Type 2 : context-free language.</li>
+  <li>Type 3 : regular language.</li>
+</ul>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Recursive Languages</li>
+  <li>Linear Languages</li>
+  <li>Determinitstic Context-Free Languages</li>
+</ul>
+</details>
+
+<h2 id="limits-of-algorithmic-computation"><a id="limits"></a>Limits of Algorithmic Computation</h2>
+<blockquote>
+  <p>Computable Functions : It states that a function on the natural numbers can be calculated by an effective method, if and only if it is computable by a Turing machine.</p>
+</blockquote>
+
+<p>接下來，我們將會討論那些 Turing machine 無法處理的問題，在討論之前，先介紹幾個概念。</p>
+
+<h3 id="computability">Computability</h3>
+<blockquote>
+  <p>A function $f$ is said to be computable if there exists a Turing Machine that computes the value of $f$.</p>
+</blockquote>
+
+<h3 id="decidability">Decidability</h3>
+<blockquote>
+  <p>The result of a computation is simple “yes” or “no”, in this case, a problem being decidable or undecidable.</p>
+</blockquote>
+
+<h4 id="the-turing-machine-halting-problem">The Turing Machine Halting Problem</h4>
+<p>「給定一個 input string 和 Turing Machine，把 string 丟進去 Turing Machine 執行後是否會停在某個 state，抑或是執行後永不停止。」</p>
+
+<p>這個問題是 undecidable，證明方法主要是利用反證法：If halting problem were decidable, then every recursively enumerable language would be recursive. 因為如果知道會不會停止，就可以建構出 membership algorithm，而凡是可以建構出 membership algorithm 的 language 就是 recursive language。</p>
+
+<p>可以 reduced to Halting Problem 的問題：</p>
+<ul>
+  <li>The state-entry Problem : the state is ever entered when applied to input string.</li>
+  <li>The blank-tape halting Problem : Turing machine halts if started with a blank tape.</li>
+</ul>
+
+<p>證明的方法就是利用該 Problem 建構出 Halting Problem，但已知 Halting Problem is undecidable，因此該 Problem 也是 undecidable (反證法)。</p>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Undecidable Problems for Recursively Enumerable Languages</li>
+  <li>The Post Correspondence Problem</li>
+  <li>Undecidable Problems for Context-Free Languages</li>
+</ul>
+</details>
+
+<h2 id="computational-complexity"><a id="complexity"></a>Computational Complexity</h2>
+<p>我們只介紹 P Problem, NP Problem。</p>
+<ul>
+  <li>P Problem : Includes all languages that are accepted by some <em>deterministic</em> Turing machine in polynomial time. 指的是有明確 polynomial time 的解法 (通常指的是暴力解)。</li>
+  <li>NP Problem : Includes all languages that are accepted by some <em>nondeterministic</em> Turing machine in polynomial time. 提供一個解法，可以在 polynomial time 被驗證 (通常暴力解會是 exponential time)。</li>
+</ul>
+
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>The SAT problem (NP)</li>
+  <li>The Hamiltonian Path Problem (NP)</li>
+  <li>The Clique Problem (NP)</li>
+  <li>NP-compete Problem</li>
+  <li>NP-hard Problem</li>
+</ul>
+</details>
 
 <h2 id="resource">Resource</h2>
 <ul>
@@ -540,15 +843,6 @@ s.setAttribute('data-timestamp', +new Date());
   <section class="related">
   <h2>Related Posts</h2>
   <ul class="posts-list">
-    
-      <li>
-        <h3>
-          <a href="/2019/09/11/hello.html">
-            學徒筆記
-            <small>11 Sep 2019</small>
-          </a>
-        </h3>
-      </li>
     
   </ul>
 </section>

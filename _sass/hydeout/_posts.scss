@@ -15,6 +15,7 @@ article + *, .post-body ~ section {
 
 .post, .page {
   .content {
+    font-size: .85rem;
     li + li {
       margin-top: .25rem;
     }
@@ -26,6 +27,7 @@ article + *, .post-body ~ section {
 .post-title,
 .post-title a {
   color: $heading-color;
+  font-size: 1.8rem;
 }
 .page-title,
 .post-title {

@@ -358,12 +358,12 @@
   
   <article class="post-body">
     <h2 class="post-title">
-      <a href="/formal%20language/2019/09/12/formal-language.html">
-        Formal Language (形式語言)
+      <a href="/formal%20language/2019/09/15/formal-language-000.html">
+        快速了解 Formal Language (形式語言)
       </a>
     </h2>
     <div class="post-meta">
-  <span class="post-date">12 Sep 2019</span>
+  <span class="post-date">15 Sep 2019</span>
   <span class="post-categories">
     
       &bull;
@@ -384,7 +384,7 @@
 
     
       <p>這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
-Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「<a href="https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80">形式語言</a>」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？</p>
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。</p>
 
 
     
@@ -395,121 +395,7 @@ Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦�
       
 
       
-        <a href="/formal%20language/2019/09/12/formal-language.html">More &hellip;</a>
-      
-    
-  </article>
-  
-  <article class="post-body">
-    <h2 class="post-title">
-      <a href="/2019/09/11/hello.html">
-        學徒筆記
-      </a>
-    </h2>
-    <div class="post-meta">
-  <span class="post-date">11 Sep 2019</span>
-  <span class="post-categories">
-    
-  </span>
-</div>
-
-
-    
-      <p>Hydeout updates the original <a href="https://github.com/poole/hyde">Hyde</a>
-theme for <a href="http://jekyllrb.com">Jekyll</a> 3.x and adds new functionality.</p>
-
-<h3 id="keep-it-simple">Keep It Simple</h3>
-
-<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
-  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>In keeping with the original Hyde theme, Hydeout aims to keep the overall
-design lightweight and plugin-free. JavaScript is currently limited only
-to Disqus and Google Analytics (and is only loaded if you provide configuration
-variables).</p>
-
-<p>Hydeout makes heavy use of Flexbox in its CSS. If Flexbox is not available,
-the CSS degrades into a single column layout.</p>
-
-<h3 id="customization">Customization</h3>
-
-<p>Hydeout replaces Hyde’s class-based theming with the use
-of the following SASS variables:</p>
-
-<div class="language-scss highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$sidebar-bg-color</span><span class="p">:</span> <span class="mh">#202020</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
-<span class="nv">$sidebar-fg-color</span><span class="p">:</span> <span class="no">white</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
-<span class="nv">$sidebar-sticky</span><span class="p">:</span> <span class="bp">true</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
-<span class="nv">$layout-reverse</span><span class="p">:</span> <span class="bp">false</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
-<span class="nv">$link-color</span><span class="p">:</span> <span class="mh">#268bd2</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p>To override these variables, create your own <code class="highlighter-rouge">assets/css/main.scss</code> file.
-Define your own variables, then import in Hydeout’s SCSS, like so:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---
-# Jekyll needs front matter for SCSS files
----
-
-$sidebar-bg-color: #ac4142;
-$link-color: #ac4142;
-$sidebar-sticky: false;
-@import "hydeout";
-</code></pre></div></div>
-
-<p>See the <a href="https://github.com/fongandrew/hydeout/blob/master/_sass/hydeout/_variables.scss">_variables</a> file for other variables
-you can override.</p>
-
-<p>You can also insert custom head tags (e.g. to load your own stylesheets) by
-defining your own <code class="highlighter-rouge">_includes/custom-head.html</code> or insert tags at the end
-of the body (e.g. for custom JS) by defining your own
-<code class="highlighter-rouge">_includes/custom-foot.html</code>.</p>
-
-<h3 id="new-features">New Features</h3>
-
-<ul>
-  <li>
-    <p>Hydeout also adds a new tags page (accessible in the sidebar) and a new
-“category” layout for dedicated category pages.</p>
-  </li>
-  <li>
-    <p>Category pages are automatically added to the sidebar. All other pages
-must have <code class="highlighter-rouge">sidebar_link: true</code> in their front matter to show up in
-the sidebar.</p>
-  </li>
-  <li>
-    <p>A simple redirect-to-Google search is available. If you want to use
-Google Custom Search or Algolia or something with more involved,
-override the <code class="highlighter-rouge">search.html</code>.</p>
-  </li>
-  <li>
-    <p>Disqus integration is ready out of the box. Just add the following to
-your config file:</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">disqus</span><span class="pi">:</span>
-  <span class="na">shortname</span><span class="pi">:</span> <span class="s">my-disqus-shortname</span>
-</code></pre></div>    </div>
-
-    <p>If you don’t want Disqus or want to use something else, override
-<code class="highlighter-rouge">comments.html</code>.</p>
-  </li>
-  <li>
-    <p>For Google Analytics support, define a <code class="highlighter-rouge">google_analytics</code> variable with
-your property ID in your config file.</p>
-  </li>
-</ul>
-
-<p>There’s also a bunch of minor tweaks and adjustments throughout the
-theme. Hope this works for you!</p>
-
-    
-
-    
-      
-      
-      
-
+        <a href="/formal%20language/2019/09/15/formal-language-000.html">More &hellip;</a>
       
     
   </article>

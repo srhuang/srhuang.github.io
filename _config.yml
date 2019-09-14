@@ -1,5 +1,6 @@
 # Dependencies
 markdown:         kramdown
+parse_block_html: true
 highlighter:      rouge
 
 # Setup

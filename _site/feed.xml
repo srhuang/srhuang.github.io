@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-12T17:28:30+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">Formal Language (形式語言)</title><link href="http://localhost:4000/formal%20language/2019/09/12/formal-language.html" rel="alternate" type="text/html" title="Formal Language (形式語言)" /><published>2019-09-12T00:00:00+08:00</published><updated>2019-09-12T00:00:00+08:00</updated><id>http://localhost:4000/formal%20language/2019/09/12/formal-language</id><content type="html" xml:base="http://localhost:4000/formal%20language/2019/09/12/formal-language.html">&lt;p&gt;這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
-Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F&quot;&gt;ENIAC&lt;/a&gt; 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「&lt;a href=&quot;https://zh.wikipedia.org/wiki/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80&quot;&gt;形式語言&lt;/a&gt;」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-15T03:04:18+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">快速了解 Formal Language (形式語言)</title><link href="http://localhost:4000/formal%20language/2019/09/15/formal-language-000.html" rel="alternate" type="text/html" title="快速了解 Formal Language (形式語言)" /><published>2019-09-15T00:00:00+08:00</published><updated>2019-09-15T00:00:00+08:00</updated><id>http://localhost:4000/formal%20language/2019/09/15/formal-language-000</id><content type="html" xml:base="http://localhost:4000/formal%20language/2019/09/15/formal-language-000.html">&lt;p&gt;這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F&quot;&gt;ENIAC&lt;/a&gt; 則是 1946 的事情了。&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -7,12 +7,12 @@ Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦�
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;#Definition&quot;&gt;Definition : Languages, Grammars, Automata&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#Regular&quot;&gt;Regular Languages and DFA&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Context-Free Languages and Pushdown Automata&lt;/li&gt;
-  &lt;li&gt;Recursively enumerable Languages and Turing Machine&lt;/li&gt;
-  &lt;li&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/li&gt;
-  &lt;li&gt;The Chomsky Hierarchy&lt;/li&gt;
-  &lt;li&gt;Others&lt;/li&gt;
-  &lt;li&gt;Computational Complexity&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#CFL&quot;&gt;Context-Free Languages and Pushdown Automata&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#REL&quot;&gt;Recursively enumerable Languages and Turing Machine&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#CSL&quot;&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#Chomsky&quot;&gt;The Chomsky Hierarchy&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#limits&quot;&gt;Limits of Algorithmic Computation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#complexity&quot;&gt;Computational Complexity&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;why-we-study-formal-language-theory&quot;&gt;Why we study formal language theory?&lt;/h2&gt;
@@ -34,20 +34,36 @@ Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦�
 
 &lt;p&gt;最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。&lt;/p&gt;
 
-&lt;h2 id=&quot;definition--languages-grammars-automata&quot;&gt;&lt;a id=&quot;Definition&quot;&gt;&lt;/a&gt;Definition : Languages, Grammars, Automata&lt;/h2&gt;
-&lt;p&gt;在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。
-Languages 是一個數學上的字串集合；這些字串集合的 derivation rules 就稱為 Grammars；而設計一個自動機來決定給定的字串是否屬於該集合則稱為 Accepter (Automata 的一種)。&lt;/p&gt;
+&lt;p&gt;Using Formal Language :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;definition of programming languages.&lt;/li&gt;
+  &lt;li&gt;interpreters.&lt;/li&gt;
+  &lt;li&gt;compilers.&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;Languages 的例子：
+&lt;details&gt;
+    &lt;summary&gt;關於 formal language 的翻譯
+&lt;/summary&gt;
+如果把 formal language 翻譯成「正規語言」，那 regular language 可能會不知道該如何翻譯，因此比較好的翻譯應該是「形式語言」，而「正規語言」是包含於「形式語言」。
+&lt;/details&gt;
+
+&lt;h2 id=&quot;definition--languages-grammars-automata&quot;&gt;&lt;a id=&quot;Definition&quot;&gt;&lt;/a&gt;Definition : Languages, Grammars, Automata&lt;/h2&gt;
+&lt;p&gt;在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Languages&lt;/em&gt; 是一個數學上的字串集合；
+這些字串集合的 derivation rules 就稱為 &lt;em&gt;Grammars&lt;/em&gt;；
+而設計一個自動機來決定給定的字串是否屬於該集合則稱為 &lt;em&gt;Accepter&lt;/em&gt; (Automata 的一種)。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Languages&lt;/strong&gt; 的例子：
 &lt;script type=&quot;math/tex&quot;&gt;L_1=\{ a^nb^n : n \geq 0 \}&lt;/script&gt;&lt;/p&gt;
 
-&lt;p&gt;Automata 基本上分為兩種：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Automata&lt;/strong&gt; 基本上分為兩種：&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;Accepter : output response is limited to a simple “yes” or “no”.&lt;/li&gt;
   &lt;li&gt;Transducer : producing strings of symbols as output.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Grammars 是用數學嚴謹的定義來描述 language：&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Grammars&lt;/strong&gt; 是用數學嚴謹的定義來描述 language：&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;variables (V) : finite set.&lt;/li&gt;
   &lt;li&gt;terminal symbols (T) : finite set.&lt;/li&gt;
@@ -59,9 +75,296 @@ Languages 是一個數學上的字串集合；這些字串集合的 derivation r
 S \to aAb|\lambda \\
 A \to aAb|\lambda&lt;/script&gt;
 
-&lt;p&gt;這個 Grammar 其實就是 Language 那個例子的 Grammar，所以 &lt;script type=&quot;math/tex&quot;&gt;L(G_1) = L_1&lt;/script&gt;。&lt;/p&gt;
+&lt;p&gt;這個 Grammar 其實就是 Language $L_1$ 那個例子的 Grammar，所以 &lt;script type=&quot;math/tex&quot;&gt;L(G_1) = L_1&lt;/script&gt;。&lt;/p&gt;
 
 &lt;h2 id=&quot;regular-languages-and-dfa&quot;&gt;&lt;a id=&quot;Regular&quot;&gt;&lt;/a&gt;Regular Languages and DFA&lt;/h2&gt;
+&lt;p&gt;我們將會從最簡單的 automata 開始討論，由於接下來的 automata 都是 accepters，所以可以暫時理解 $automata=accepters$。&lt;/p&gt;
+
+&lt;p&gt;Language 是一種字串的集合，關於這個集合我們會用各種角度和方式來描述它，讓它變得更加具體，其中一個就是設計一個 automata 讓所有該集合的字串都能通過該 automata(accepter)；Grammars 則是透過數學的方式來描述該 language。&lt;/p&gt;
+
+&lt;h3 id=&quot;finite-automata-finite-state-machine-fsm&quot;&gt;Finite Automata (Finite State Machine, FSM)&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Deterministic Finite Automata (DFA) is defined by internal states, input alphabet, transition function, initial state, final states.
+    &lt;ul&gt;
+      &lt;li&gt;each move consumes one input symbol.&lt;/li&gt;
+      &lt;li&gt;the string is accepted if the automaton is in one of its final states.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Nondeterministic Finite Automata (NFA)
+    &lt;ul&gt;
+      &lt;li&gt;transition function range is a set of possible states.&lt;/li&gt;
+      &lt;li&gt;can make a transition without consuming an input symbol.&lt;/li&gt;
+      &lt;li&gt;there is no transition defined for the specific situation.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The classes of DFA and NFA are equally powerfully.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;regular-language&quot;&gt;Regular Language&lt;/h3&gt;
+&lt;p&gt;A language $L$ is called regular if and only if there exists some DFA $M$ such that, $L=L(M)$.&lt;/p&gt;
+
+&lt;h3 id=&quot;regular-grammar&quot;&gt;Regular Grammar&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A language $L$ is regular if and only if there exists a regular grammar $G$ such that $L=L(G)$.&lt;/li&gt;
+  &lt;li&gt;A regular grammar is one that is either right-linear or left-linear, which there is exactly one variable occuring as the rightmost/leftmost symbol.&lt;br /&gt;
+Right-Linear Grammars ：$A \to xB$&lt;br /&gt;
+Left-Linear Grammars : $A \to Bx$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;regular-expression&quot;&gt;Regular Expression&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;One way of describing regular language is via the notation of regular expression.&lt;/li&gt;
+  &lt;li&gt;Two regular expressions are equivalent if they denote the same language.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;There are three ways to describe regular languages：DFA, regular expression, regular grammars.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;Closure Properties of Regular Languages&lt;/li&gt;
+  &lt;li&gt;membership algorithm&lt;/li&gt;
+  &lt;li&gt;Identifying Nonregular Languages
+    &lt;ul&gt;
+        &lt;li&gt;Pigeonhole Principle (鴿籠原理)&lt;/li&gt;
+        &lt;li&gt;Pumping Lemma&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h2 id=&quot;context-free-languages-and-pushdown-automata&quot;&gt;&lt;a id=&quot;CFL&quot;&gt;&lt;/a&gt;Context-Free Languages and Pushdown Automata&lt;/h2&gt;
+&lt;p&gt;雖然 regular language 廣泛應用在 computer science 領域中，但是還是有很多是 regular language 無法處理的，例如我們舉的第一個例子：&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_1=\{ a^nb^n : n \geq 0 \}&lt;/script&gt;
+
+&lt;p&gt;假如 $a=“(”, b=”)”$，那麼這個 language 所產生的 automata 將會是判斷 programming language 的括號是否合法的方法之一。可以想像的是，利用 finite state 將無法紀錄已經 parsing 幾個 a 了，因此我們需要更強大的 language 來處理 regular language 無法處理的 language。
+最核心的概念就是在 finite state 以外新增 storage (stack)。你將會發現「新增/修改 storage」是區別每個 language 所對應的 automata 重要的 property 之一。&lt;/p&gt;
+
+&lt;h3 id=&quot;context-free-grammars&quot;&gt;Context-Free Grammars&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;all productions in P have the form $A \to x$.&lt;/li&gt;
+  &lt;li&gt;retaining the restriction on the left side, but permitting anything on the right.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;context-free-languages&quot;&gt;Context-Free Languages&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A language $L$ is said to be context-free if and only if there is a context-free grammar $G$ such that $L=L(G)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;Derivation Tree (Parse tree)&lt;/li&gt;
+  &lt;li&gt;Sentential form of the derivation&lt;/li&gt;
+  &lt;li&gt;Parsing and Ambiguity
+    &lt;ul&gt;
+        &lt;li&gt;exhaustive search parsing (brute force parsing)&lt;/li&gt;
+        &lt;li&gt;Simple Grammar (s-grammar)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Simplification of Context-Free Grammars and Normal Forms
+    &lt;ul&gt;
+        &lt;li&gt;Chomsky Normal Form : A-&amp;gt;BC or A-&amp;gt;a&lt;/li&gt;
+        &lt;li&gt;Greibach Normal Form : A-&amp;gt;ax&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;pushdown-automata&quot;&gt;Pushdown Automata&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Nondeterministic Pushdown Automata (NPDA)
+    &lt;ul&gt;
+      &lt;li&gt;For any context-free language $L$, there exists an NPDA $M$ such that $L=L(M)$.&lt;/li&gt;
+      &lt;li&gt;If $L=L(M)$ for some NPDA $M$, then $L$ is a context-free language.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Deterministic Pushdown Automata (DPDA)
+    &lt;ul&gt;
+      &lt;li&gt;A language $L$ is said to be a deterministic context-free language if and only if there exists a DPDA $M$ such that $L=L(M)$.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;deterministic and nondeterministic pushdown automata are not equivalent.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;Properties of Context-Free Languages
+    &lt;ul&gt;
+        &lt;li&gt;A pumping lemma for context-free languages&lt;/li&gt;
+        &lt;li&gt;Closure Properties for Context-Free Languages&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h2 id=&quot;recursively-enumerable-languages-and-turing-machine&quot;&gt;&lt;a id=&quot;REL&quot;&gt;&lt;/a&gt;Recursively enumerable Languages and Turing Machine&lt;/h2&gt;
+&lt;p&gt;我們發現還是有 Language 不屬於 regular and context-free language&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_1=\{ a^nb^nc^n : n \geq 0 \}&lt;/script&gt;
+
+&lt;p&gt;因此透過修改 storage 可以得到更 powerful 的 language : Turing Machine (Using Tapes).&lt;/p&gt;
+
+&lt;h3 id=&quot;turing-machine&quot;&gt;Turing Machine&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Definition : associated with the tape is a read-write head that can travel right or left.&lt;/li&gt;
+  &lt;li&gt;The Turing machine enters a final state and halts, then the string is considered to be accepted.&lt;/li&gt;
+  &lt;li&gt;main features :
+    &lt;ul&gt;
+      &lt;li&gt;tape is unbounded in both directions.&lt;/li&gt;
+      &lt;li&gt;deterministic.&lt;/li&gt;
+      &lt;li&gt;no special input file / output device.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Church Turing Thesis : 任何在算法上可計算的問題同樣可由圖靈機計算。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;recursively-enumerable-languages&quot;&gt;Recursively enumerable Languages&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A language $L$ is said to be recursively enumerable if there exists a Turing machine that accepts it.&lt;/li&gt;
+  &lt;li&gt;There is an &lt;em&gt;enumeration procedure&lt;/em&gt; for every recursively enumerable language.&lt;/li&gt;
+  &lt;li&gt;enumeration procedure : 存在一個 algorithm 可以列出所有 strings in the language.&lt;/li&gt;
+  &lt;li&gt;Recursively enumerable Languages is countable.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;recursive-languages&quot;&gt;Recursive Languages&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A language is recursive in and only if there exists a &lt;em&gt;membership algorithm&lt;/em&gt; for it.&lt;/li&gt;
+  &lt;li&gt;membership algorithm : 存在一個 algorithm 可以決定該 string 是否屬於 language。&lt;/li&gt;
+  &lt;li&gt;If a language is recursive, then there exists an enumeration procedure.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;the family of recursive language is a proper subset of the family of recursively enumerable languages.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;這邊常用的證明方法 : diagonalization&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;unrestricted-grammars&quot;&gt;Unrestricted Grammars&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A grammar is called unrestricted if all the productions are of the form $u \to v$.&lt;/li&gt;
+  &lt;li&gt;Any number of variables and terminals can be on the left or righting any order.&lt;/li&gt;
+  &lt;li&gt;Any language generated by an unrestricted grammar is &lt;em&gt;recursively enumerable&lt;/em&gt;.&lt;/li&gt;
+  &lt;li&gt;For every recursively enumeration language $L$, there exists an unrestricted grammar $G$, such that $L=L(G)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;context-sensitive-languages-and-linear-bounded-automata&quot;&gt;&lt;a id=&quot;CSL&quot;&gt;&lt;/a&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/h2&gt;
+&lt;p&gt;Context-free languages，顧名思義就在 derivation 的時候並不考慮上下文，因此根據 definition，there is no terminal on the left of any production.接下來將會介紹根據上下文的 Context-Sensitive Languages。&lt;/p&gt;
+
+&lt;h3 id=&quot;context-sensitive-grammars&quot;&gt;Context-Sensitive Grammars&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A grammar is called Context-Sensitive if all the productions are of the form $x \to y$, where &lt;script type=&quot;math/tex&quot;&gt;\|x\| \leq \|y\|&lt;/script&gt;.&lt;/li&gt;
+  &lt;li&gt;the length of successive sentential forms can never decrease.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;linear-bounded-automata&quot;&gt;Linear Bounded Automata&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Turing machine with limiting the tape.&lt;/li&gt;
+  &lt;li&gt;For every context-sensitive language $L$ (not including empty string), there exists some linear bounded automata $M$ such that $L=L(M)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;context-sensitive-languages&quot;&gt;Context-Sensitive Languages&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;A language $L$ is said to be context-sensitive if and only if there is a context-sensitive grammar $G$ such that $L=L(G)$.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;the-chomsky-hierarchy&quot;&gt;&lt;a id=&quot;Chomsky&quot;&gt;&lt;/a&gt;The Chomsky Hierarchy&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Type 0 : recursively enumerable languages (unrestricted grammars).&lt;/li&gt;
+  &lt;li&gt;Type 1 : context-sensitive language.&lt;/li&gt;
+  &lt;li&gt;Type 2 : context-free language.&lt;/li&gt;
+  &lt;li&gt;Type 3 : regular language.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;Recursive Languages&lt;/li&gt;
+  &lt;li&gt;Linear Languages&lt;/li&gt;
+  &lt;li&gt;Determinitstic Context-Free Languages&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h2 id=&quot;limits-of-algorithmic-computation&quot;&gt;&lt;a id=&quot;limits&quot;&gt;&lt;/a&gt;Limits of Algorithmic Computation&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Computable Functions : It states that a function on the natural numbers can be calculated by an effective method, if and only if it is computable by a Turing machine.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;接下來，我們將會討論那些 Turing machine 無法處理的問題，在討論之前，先介紹幾個概念。&lt;/p&gt;
+
+&lt;h3 id=&quot;computability&quot;&gt;Computability&lt;/h3&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;A function $f$ is said to be computable if there exists a Turing Machine that computes the value of $f$.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;decidability&quot;&gt;Decidability&lt;/h3&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The result of a computation is simple “yes” or “no”, in this case, a problem being decidable or undecidable.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;the-turing-machine-halting-problem&quot;&gt;The Turing Machine Halting Problem&lt;/h4&gt;
+&lt;p&gt;「給定一個 input string 和 Turing Machine，把 string 丟進去 Turing Machine 執行後是否會停在某個 state，抑或是執行後永不停止。」&lt;/p&gt;
+
+&lt;p&gt;這個問題是 undecidable，證明方法主要是利用反證法：If halting problem were decidable, then every recursively enumerable language would be recursive. 因為如果知道會不會停止，就可以建構出 membership algorithm，而凡是可以建構出 membership algorithm 的 language 就是 recursive language。&lt;/p&gt;
+
+&lt;p&gt;可以 reduced to Halting Problem 的問題：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The state-entry Problem : the state is ever entered when applied to input string.&lt;/li&gt;
+  &lt;li&gt;The blank-tape halting Problem : Turing machine halts if started with a blank tape.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;證明的方法就是利用該 Problem 建構出 Halting Problem，但已知 Halting Problem is undecidable，因此該 Problem 也是 undecidable (反證法)。&lt;/p&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;Undecidable Problems for Recursively Enumerable Languages&lt;/li&gt;
+  &lt;li&gt;The Post Correspondence Problem&lt;/li&gt;
+  &lt;li&gt;Undecidable Problems for Context-Free Languages&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+
+&lt;h2 id=&quot;computational-complexity&quot;&gt;&lt;a id=&quot;complexity&quot;&gt;&lt;/a&gt;Computational Complexity&lt;/h2&gt;
+&lt;p&gt;我們只介紹 P Problem, NP Problem。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;P Problem : Includes all languages that are accepted by some &lt;em&gt;deterministic&lt;/em&gt; Turing machine in polynomial time. 指的是有明確 polynomial time 的解法 (通常指的是暴力解)。&lt;/li&gt;
+  &lt;li&gt;NP Problem : Includes all languages that are accepted by some &lt;em&gt;nondeterministic&lt;/em&gt; Turing machine in polynomial time. 提供一個解法，可以在 polynomial time 被驗證 (通常暴力解會是 exponential time)。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;details&gt;
+    &lt;summary&gt;想知道更多？
+&lt;/summary&gt;
+&lt;ul&gt;
+  &lt;li&gt;The SAT problem (NP)&lt;/li&gt;
+  &lt;li&gt;The Hamiltonian Path Problem (NP)&lt;/li&gt;
+  &lt;li&gt;The Clique Problem (NP)&lt;/li&gt;
+  &lt;li&gt;NP-compete Problem&lt;/li&gt;
+  &lt;li&gt;NP-hard Problem&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
 
 &lt;h2 id=&quot;resource&quot;&gt;Resource&lt;/h2&gt;
 &lt;ul&gt;
@@ -71,90 +374,4 @@ A \to aAb|\lambda&lt;/script&gt;
   &lt;li&gt;&lt;a href=&quot;https://mropengate.blogspot.com/2015/06/formal-language.html&quot;&gt;正規語言Formal Language | Mr. Opengate
 &lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&quot;&gt;Theory of Computation &amp;amp; Automata Theory&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>srhuang</name></author><category term="theory" /><category term="mathematics" /><summary type="html">這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。 Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 ENIAC 則是 1946 的事情了。值得一提的是，Formal language 較好的翻譯應該是「形式語言」，如果翻成「正規語言」的話，我會很好奇 regular language 會怎麼翻？</summary></entry><entry><title type="html">學徒筆記</title><link href="http://localhost:4000/2019/09/11/hello.html" rel="alternate" type="text/html" title="學徒筆記" /><published>2019-09-11T00:00:00+08:00</published><updated>2019-09-11T00:00:00+08:00</updated><id>http://localhost:4000/2019/09/11/hello</id><content type="html" xml:base="http://localhost:4000/2019/09/11/hello.html">&lt;p&gt;Hydeout updates the original &lt;a href=&quot;https://github.com/poole/hyde&quot;&gt;Hyde&lt;/a&gt;
-theme for &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll&lt;/a&gt; 3.x and adds new functionality.&lt;/p&gt;
-
-&lt;h3 id=&quot;keep-it-simple&quot;&gt;Keep It Simple&lt;/h3&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In keeping with the original Hyde theme, Hydeout aims to keep the overall
-design lightweight and plugin-free. JavaScript is currently limited only
-to Disqus and Google Analytics (and is only loaded if you provide configuration
-variables).&lt;/p&gt;
-
-&lt;p&gt;Hydeout makes heavy use of Flexbox in its CSS. If Flexbox is not available,
-the CSS degrades into a single column layout.&lt;/p&gt;
-
-&lt;h3 id=&quot;customization&quot;&gt;Customization&lt;/h3&gt;
-
-&lt;p&gt;Hydeout replaces Hyde’s class-based theming with the use
-of the following SASS variables:&lt;/p&gt;
-
-&lt;div class=&quot;language-scss highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$sidebar-bg-color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;#202020&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$sidebar-fg-color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$sidebar-sticky&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$layout-reverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;false&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$link-color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;#268bd2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;To override these variables, create your own &lt;code class=&quot;highlighter-rouge&quot;&gt;assets/css/main.scss&lt;/code&gt; file.
-Define your own variables, then import in Hydeout’s SCSS, like so:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;---
-# Jekyll needs front matter for SCSS files
----
-
-$sidebar-bg-color: #ac4142;
-$link-color: #ac4142;
-$sidebar-sticky: false;
-@import &quot;hydeout&quot;;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;See the &lt;a href=&quot;https://github.com/fongandrew/hydeout/blob/master/_sass/hydeout/_variables.scss&quot;&gt;_variables&lt;/a&gt; file for other variables
-you can override.&lt;/p&gt;
-
-&lt;p&gt;You can also insert custom head tags (e.g. to load your own stylesheets) by
-defining your own &lt;code class=&quot;highlighter-rouge&quot;&gt;_includes/custom-head.html&lt;/code&gt; or insert tags at the end
-of the body (e.g. for custom JS) by defining your own
-&lt;code class=&quot;highlighter-rouge&quot;&gt;_includes/custom-foot.html&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;new-features&quot;&gt;New Features&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Hydeout also adds a new tags page (accessible in the sidebar) and a new
-“category” layout for dedicated category pages.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Category pages are automatically added to the sidebar. All other pages
-must have &lt;code class=&quot;highlighter-rouge&quot;&gt;sidebar_link: true&lt;/code&gt; in their front matter to show up in
-the sidebar.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;A simple redirect-to-Google search is available. If you want to use
-Google Custom Search or Algolia or something with more involved,
-override the &lt;code class=&quot;highlighter-rouge&quot;&gt;search.html&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Disqus integration is ready out of the box. Just add the following to
-your config file:&lt;/p&gt;
-
-    &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;disqus&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;shortname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-disqus-shortname&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;If you don’t want Disqus or want to use something else, override
-&lt;code class=&quot;highlighter-rouge&quot;&gt;comments.html&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;For Google Analytics support, define a &lt;code class=&quot;highlighter-rouge&quot;&gt;google_analytics&lt;/code&gt; variable with
-your property ID in your config file.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There’s also a bunch of minor tweaks and adjustments throughout the
-theme. Hope this works for you!&lt;/p&gt;</content><author><name>srhuang</name></author><summary type="html">Hydeout updates the original Hyde theme for Jekyll 3.x and adds new functionality. Keep It Simple int main(){ return 0; } In keeping with the original Hyde theme, Hydeout aims to keep the overall design lightweight and plugin-free. JavaScript is currently limited only to Disqus and Google Analytics (and is only loaded if you provide configuration variables). Hydeout makes heavy use of Flexbox in its CSS. If Flexbox is not available, the CSS degrades into a single column layout. Customization Hydeout replaces Hyde’s class-based theming with the use of the following SASS variables: $sidebar-bg-color: #202020 !default; $sidebar-fg-color: white !default; $sidebar-sticky: true !default; $layout-reverse: false !default; $link-color: #268bd2 !default; To override these variables, create your own assets/css/main.scss file. Define your own variables, then import in Hydeout’s SCSS, like so: --- # Jekyll needs front matter for SCSS files --- $sidebar-bg-color: #ac4142; $link-color: #ac4142; $sidebar-sticky: false; @import &quot;hydeout&quot;; See the _variables file for other variables you can override. You can also insert custom head tags (e.g. to load your own stylesheets) by defining your own _includes/custom-head.html or insert tags at the end of the body (e.g. for custom JS) by defining your own _includes/custom-foot.html. New Features Hydeout also adds a new tags page (accessible in the sidebar) and a new “category” layout for dedicated category pages. Category pages are automatically added to the sidebar. All other pages must have sidebar_link: true in their front matter to show up in the sidebar. A simple redirect-to-Google search is available. If you want to use Google Custom Search or Algolia or something with more involved, override the search.html. Disqus integration is ready out of the box. Just add the following to your config file: disqus: shortname: my-disqus-shortname If you don’t want Disqus or want to use something else, override comments.html. For Google Analytics support, define a google_analytics variable with your property ID in your config file. There’s also a bunch of minor tweaks and adjustments throughout the theme. Hope this works for you!</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>srhuang</name></author><category term="theory" /><category term="mathematics" /><summary type="html">這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。 Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 ENIAC 則是 1946 的事情了。</summary></entry></feed>
