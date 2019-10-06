@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="https://gmpg.org/xfn/11" rel="profile" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+  <title>
+    
+      The difference between a++ and ++a from assembly code &middot; 學徒筆記
+    
+  </title>
+
+  
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface" />
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/srlogo.png" />
+<link rel="shortcut icon" href="/srlogo.png" />
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml" />
+
+  <!-- Additional head bits without overriding original head -->
+</head>
+
+
+  <body class="post">
+
+    <div id="sidebar">
+  <header>
+    <div class="site-title">
+      <a href="/">
+        
+          <span class="back-arrow icon"><svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h24v24H0z" fill="none"/>
+  <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+</svg></span>
+        
+        學徒筆記
+      </a>
+    </div>
+    <p class="lead">邁向偉大的航道</p>
+  </header>
+  <nav id="sidebar-nav-links">
+  
+    <a class="home-link "
+        href="/">Home</a>
+  
+  
+
+  
+
+  
+
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+      <a class="page-link "
+          href="/about.html">About</a>
+    
+  
+
+  
+    
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+
+  
+
+
+  
+
+  
+    
+      <a class="category-link "
+          href="/category/C++.html">C++</a>
+    
+  
+
+  
+    
+      <a class="category-link "
+          href="/category/C.html">C</a>
+    
+  
+
+  
+    
+      <a class="category-link "
+          href="/category/Formal-Language.html">Formal Language</a>
+    
+  
+
+  
+    
+      <a class="category-link "
+          href="/category/Tools.html">Tools</a>
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+
+  
+    
+  
+
+  
+    
+  
+
+  
+    
+  
+
+
+  <!-- Optional additional links to insert in sidebar nav -->
+<a href="https://beta.hackfoldr.org/srhuang-note" target="_blank">Hackmd</a>
+</nav>
+
+
+  
+
+  <nav id="sidebar-icon-links">
+  
+
+  <a id="subscribe-link"
+     class="icon" title="Subscribe" aria-label="Subscribe"
+     href="/feed.xml" target="_blank">
+    <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <circle cx="6.18" cy="17.82" r="2.18"/>
+    <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/>
+</svg>
+  </a>
+
+  
+  
+  
+  
+
+  
+    <a id="tags-link"
+       class="icon"
+       title="Tags" aria-label="Tags"
+       href="/tags.html">
+      <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0h24v24H0z" fill="none"/>
+    <path d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z"/>
+</svg>
+    </a>
+  
+
+  
+    <a id="search-link"
+       class="icon"
+       title="Search" aria-label="Search"
+       href="/search.html">
+      <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    <path d="M0 0h24v24H0z" fill="none"/>
+</svg>
+    </a>
+  
+
+  <!-- Optional additional links to insert for icons links -->
+<a id="github-link"
+       class="icon" title="Github Project" aria-label="Github Project"
+       href="https://github.com/srhuang" target="_blank">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 28" height="24" width="28"><path d="M12 2c6.625 0 12 5.375 12 12 0 5.297-3.437 9.797-8.203 11.391-0.609 0.109-0.828-0.266-0.828-0.578 0-0.391 0.016-1.687 0.016-3.297 0-1.125-0.375-1.844-0.812-2.219 2.672-0.297 5.484-1.313 5.484-5.922 0-1.313-0.469-2.375-1.234-3.219 0.125-0.313 0.531-1.531-0.125-3.187-1-0.313-3.297 1.234-3.297 1.234-0.953-0.266-1.984-0.406-3-0.406s-2.047 0.141-3 0.406c0 0-2.297-1.547-3.297-1.234-0.656 1.656-0.25 2.875-0.125 3.187-0.766 0.844-1.234 1.906-1.234 3.219 0 4.594 2.797 5.625 5.469 5.922-0.344 0.313-0.656 0.844-0.766 1.609-0.688 0.313-2.438 0.844-3.484-1-0.656-1.141-1.844-1.234-1.844-1.234-1.172-0.016-0.078 0.734-0.078 0.734 0.781 0.359 1.328 1.75 1.328 1.75 0.703 2.141 4.047 1.422 4.047 1.422 0 1 0.016 1.937 0.016 2.234 0 0.313-0.219 0.688-0.828 0.578-4.766-1.594-8.203-6.094-8.203-11.391 0-6.625 5.375-12 12-12zM4.547 19.234c0.031-0.063-0.016-0.141-0.109-0.187-0.094-0.031-0.172-0.016-0.203 0.031-0.031 0.063 0.016 0.141 0.109 0.187 0.078 0.047 0.172 0.031 0.203-0.031zM5.031 19.766c0.063-0.047 0.047-0.156-0.031-0.25-0.078-0.078-0.187-0.109-0.25-0.047-0.063 0.047-0.047 0.156 0.031 0.25 0.078 0.078 0.187 0.109 0.25 0.047zM5.5 20.469c0.078-0.063 0.078-0.187 0-0.297-0.063-0.109-0.187-0.156-0.266-0.094-0.078 0.047-0.078 0.172 0 0.281s0.203 0.156 0.266 0.109zM6.156 21.125c0.063-0.063 0.031-0.203-0.063-0.297-0.109-0.109-0.25-0.125-0.313-0.047-0.078 0.063-0.047 0.203 0.063 0.297 0.109 0.109 0.25 0.125 0.313 0.047zM7.047 21.516c0.031-0.094-0.063-0.203-0.203-0.25-0.125-0.031-0.266 0.016-0.297 0.109s0.063 0.203 0.203 0.234c0.125 0.047 0.266 0 0.297-0.094zM8.031 21.594c0-0.109-0.125-0.187-0.266-0.172-0.141 0-0.25 0.078-0.25 0.172 0 0.109 0.109 0.187 0.266 0.172 0.141 0 0.25-0.078 0.25-0.172zM8.937 21.438c-0.016-0.094-0.141-0.156-0.281-0.141-0.141 0.031-0.234 0.125-0.219 0.234 0.016 0.094 0.141 0.156 0.281 0.125s0.234-0.125 0.219-0.219z"></path>
+</svg>
+
+</a>
+<a id="facebook-link"
+       class="icon" title="facebook" aria-label="Facebook"
+       href="https://www.facebook.com/profile.php?id=100001814471613" target="_blank">
+      <?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 112.196 112.196" style="enable-background:new 0 0 112.196 112.196;" xml:space="preserve">
+<g>
+	<circle style="fill:#3B5998;" cx="56.098" cy="56.098" r="56.098"/>
+	<path style="fill:#FFFFFF;" d="M70.201,58.294h-10.01v36.672H45.025V58.294h-7.213V45.406h7.213v-8.34
+		c0-5.964,2.833-15.303,15.301-15.303L71.56,21.81v12.51h-8.151c-1.337,0-3.217,0.668-3.217,3.513v7.585h11.334L70.201,58.294z"/>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
+
+</a>
+<a id="gmail-link"
+       class="icon" title="gmail" aria-label="Gmail"
+       href="mailto:lukyandy3162@gmail.com" target="_blank">
+      <?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<rect x="64" y="64" style="fill:#ECEFF1;" width="384" height="384"/>
+<polygon style="fill:#CFD8DC;" points="256,296.384 448,448 448,148.672 "/>
+<path style="fill:#F44336;" d="M464,64h-16L256,215.616L64,64H48C21.504,64,0,85.504,0,112v288c0,26.496,21.504,48,48,48h16V148.672
+	l192,147.68L448,148.64V448h16c26.496,0,48-21.504,48-48V112C512,85.504,490.496,64,464,64z"/>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
+
+</a>
+</nav>
+
+  <p>
+  &copy; 2019.
+  <a href="/LICENSE.md">MIT License.</a>
+</p>
+
+</div>
+
+    <main class="container">
+      <header>
+  <h1 class="post-title">The difference between a++ and ++a from assembly code</h1>
+</header>
+<div class="content">
+  <div class="post-meta">
+  <span class="post-date">06 Oct 2019</span>
+  <span class="post-categories">
+    
+      &bull;
+
+      
+      
+      
+
+      
+        <a href="/category/C.html">
+          C
+        </a>
+      
+    
+  </span>
+</div>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+>
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://vincenttam.github.io/javascripts/MathJaxLocal.js"
+>
+</script>
+
+
+  <div class="post-body">
+    <p>以下是科技公司面試常考的考題，主要是測驗你對於 a++/++a 的認知。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</code></pre></div></div>
+<p>請問上面這段程式碼會印出什麼？</p>
+
+<!--more-->
+
+<p>我們首先想要了解 <code class="highlighter-rouge">a++</code> 和 <code class="highlighter-rouge">++a</code> 的差別，就要去看它們所產生出來的 assembly code。</p>
+
+<p>先介紹一個可以線上產生 assembly code 的網站，可以幫助我們快速深刻的了解 C。
+<a href="https://gcc.godbolt.org/">https://gcc.godbolt.org/</a></p>
+
+<h2 id="a">a++</h2>
+<p>來考慮下面的程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
+
+<pre><code class="language-assembly">test:
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], 9527
+        mov     eax, DWORD PTR [rbp-4]
+        lea     edx, [rax+1]
+        mov     DWORD PTR [rbp-4], edx
+        mov     DWORD PTR [rbp-8], eax
+        nop
+        pop     rbp
+        ret
+</code></pre>
+<p>如果我們只關注在 <code class="highlighter-rouge">int b=a++</code>：</p>
+<pre><code class="language-assembly">        mov     eax, DWORD PTR [rbp-4]
+        lea     edx, [rax+1]
+        mov     DWORD PTR [rbp-4], edx
+        mov     DWORD PTR [rbp-8], eax
+</code></pre>
+<ul>
+  <li>第一行 <code class="highlighter-rouge">DWORD PTR [rbp-4]</code> 代表變數 <code class="highlighter-rouge">a</code> 的位址，所以翻譯成中文就是把 <code class="highlighter-rouge">a</code> 的位址複製到暫存器 <code class="highlighter-rouge">eax</code>。</li>
+</ul>
+
+<p>在講解第二行之前必須先瞭解 eax 和 rax 的關係：
+<a href="https://stackoverflow.com/questions/25455447/x86-64-registers-rax-eax-ax-al-overwriting-full-register-contents">rax, eax, ax, ah, al</a></p>
+
+<p>以及中括號(brackets)在 assembly language 的意義：
+<a href="https://stackoverflow.com/questions/48608423/what-do-square-brackets-mean-in-x86-assembly">get the value of the address</a></p>
+
+<ul>
+  <li>
+    <p>因此第二行的翻譯就是將 <code class="highlighter-rouge">a</code> 加一後的值存入暫存器 <code class="highlighter-rouge">edx</code>，注意這邊並不更改 <code class="highlighter-rouge">a</code> 在 memory 的值。</p>
+  </li>
+  <li>第三行的翻譯就是將儲存在 <code class="highlighter-rouge">edx</code> 的值(a+1)存入 <code class="highlighter-rouge">a</code> memory 的所在位址。</li>
+  <li>第四行的翻譯就是將儲存在 <code class="highlighter-rouge">eax</code> 的值(a)存入 <code class="highlighter-rouge">b</code> memory 的所在位址。</li>
+</ul>
+
+<p>因此最後 <code class="highlighter-rouge">b=9527</code> 然後 <code class="highlighter-rouge">a=9528</code>。</p>
+
+<h2 id="a-1">++a</h2>
+<p>接下來考慮下面的程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="o">++</span><span class="n">a</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
+<pre><code class="language-assembly">test:
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], 9527
+        add     DWORD PTR [rbp-4], 1
+        mov     eax, DWORD PTR [rbp-4]
+        mov     DWORD PTR [rbp-8], eax
+        nop
+        pop     rbp
+        ret
+</code></pre>
+<p>如果我們只關注在 <code class="highlighter-rouge">int b=++a</code>：</p>
+<pre><code class="language-assembly">        add     DWORD PTR [rbp-4], 1
+        mov     eax, DWORD PTR [rbp-4]
+        mov     DWORD PTR [rbp-8], eax
+</code></pre>
+<ul>
+  <li>第一行直接使用 <code class="highlighter-rouge">add</code> 指令將 1 加到 <code class="highlighter-rouge">a</code> memory 所在位址。</li>
+  <li>第二行將 <code class="highlighter-rouge">a</code> memory 的值(a+1)存入 <code class="highlighter-rouge">eax</code>。</li>
+  <li>第三行將儲存在 <code class="highlighter-rouge">eax</code> 的值(a+1)存入 <code class="highlighter-rouge">b</code> memory 的所在位址。</li>
+</ul>
+
+<p>有觀察到差異了嗎？</p>
+
+<p>C 對於 statement 的運算必須經由暫存器，因此關鍵在於暫存器所存的值是 <code class="highlighter-rouge">a</code> 還是 <code class="highlighter-rouge">a+1</code>，不論是<code class="highlighter-rouge">a++</code> 或是 <code class="highlighter-rouge">++a</code>，<code class="highlighter-rouge">a</code> 在 memory 的值都會先加一。</p>
+
+<h2 id="aa">a=a++</h2>
+<p>考慮以下程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
+<pre><code class="language-assembly">test:
+        push    rbp
+        mov     rbp, rsp
+        mov     DWORD PTR [rbp-4], 9527
+        mov     eax, DWORD PTR [rbp-4]
+        lea     edx, [rax+1]
+        mov     DWORD PTR [rbp-4], edx
+        mov     DWORD PTR [rbp-4], eax
+        nop
+        pop     rbp
+        ret
+</code></pre>
+<p>如果我們只關注在 <code class="highlighter-rouge">a=a++</code>：</p>
+<pre><code class="language-assembly">        mov     eax, DWORD PTR [rbp-4]
+        lea     edx, [rax+1]
+        mov     DWORD PTR [rbp-4], edx
+        mov     DWORD PTR [rbp-4], eax
+</code></pre>
+<p>根據上面的討論，這四行 assembly code 所代表的意義就是：將 <code class="highlighter-rouge">a</code> 的值複製到 <code class="highlighter-rouge">eax</code>，然後利用暫存器 <code class="highlighter-rouge">edx</code>將 <code class="highlighter-rouge">a</code> memory 所在的位址的值加一，最後將<code class="highlighter-rouge">eax</code>(a) 存回 <code class="highlighter-rouge">a</code> memory 所在的位址，因此<code class="highlighter-rouge">a</code>並不會更改它的值。</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</code></pre></div></div>
+<p>會印出<code class="highlighter-rouge">a=9527</code>。</p>
+
+
+    
+
+
+
+<div class="post-tags">
+  
+</div>
+  </div>
+
+  
+  <section class="comments">
+    <h2>Comments</h2>
+    
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://srhuang.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+  </section>
+
+  <section class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts-list">
+    
+  </ul>
+</section>
+
+</div>
+
+
+    </main>
+
+    <!-- Optional footer content -->
+
+  </body>
+</html>

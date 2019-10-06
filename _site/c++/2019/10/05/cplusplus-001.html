@@ -11,7 +11,7 @@
 
   <title>
     
-      C++ &middot; 學徒筆記
+      C++ Vector clear() and resize(0) &middot; 學徒筆記
     
   </title>
 
@@ -35,7 +35,7 @@
 </head>
 
 
-  <body class="category">
+  <body class="post">
 
     <div id="sidebar">
   <header>
@@ -115,7 +115,7 @@
 
   
     
-      <a class="category-link  active"
+      <a class="category-link "
           href="/category/C++.html">C++</a>
     
   
@@ -322,26 +322,128 @@
 
     <main class="container">
       <header>
-  <h1 class="page-title">C++</h1>
+  <h1 class="post-title">C++ Vector clear() and resize(0)</h1>
 </header>
 <div class="content">
-  
+  <div class="post-meta">
+  <span class="post-date">05 Oct 2019</span>
+  <span class="post-categories">
+    
+      &bull;
 
-<ul class="posts-list">
-  
-  
-    <li>
-      <h3>
-        <a href="/c++/2019/10/05/cplusplus-001.html">
-          C++ Vector clear() and resize(0)
-          <small>05 Oct 2019</small>
+      
+      
+      
+
+      
+        <a href="/category/C++.html">
+          C++
         </a>
-      </h3>
-    </li>
+      
+    
+  </span>
+</div>
+
   
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+>
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://vincenttam.github.io/javascripts/MathJaxLocal.js"
+>
+</script>
+
+
+  <div class="post-body">
+    <p>從 C++ STL source code 來了解 vector.clear() and vector.resize(0) 的差異。</p>
+
+<!--more-->
+
+<h2 id="resource">Resource</h2>
+<ul>
+  <li><a href="http://www.cplusplus.com/reference/vector/vector/resize/">resize</a></li>
+  <li><a href="http://www.cplusplus.com/reference/vector/vector/clear/">clear</a></li>
+  <li><a href="https://github.com/llvm/llvm-project/blob/master/libcxx/include/vector">C++ Vector STL source code</a></li>
 </ul>
 
+<h2 id="stl-source-code-分析">STL source code 分析</h2>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Allocator</span><span class="o">&gt;::</span><span class="n">resize</span><span class="p">(</span><span class="n">size_type</span> <span class="n">__sz</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">size_type</span> <span class="n">__cs</span> <span class="o">=</span> <span class="n">size</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span> <span class="o">&lt;</span> <span class="n">__sz</span><span class="p">)</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">__append</span><span class="p">(</span><span class="n">__sz</span> <span class="o">-</span> <span class="n">__cs</span><span class="p">);</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span> <span class="o">&gt;</span> <span class="n">__sz</span><span class="p">)</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">__destruct_at_end</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">__begin_</span> <span class="o">+</span> <span class="n">__sz</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>resize(0) 代表 <code class="highlighter-rouge">__sz=0</code>，就會執行<code class="highlighter-rouge">__destruct_at_end(this-&gt;__begin_)</code>。</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">clear</span><span class="p">()</span> <span class="n">_NOEXCEPT</span> <span class="p">{</span><span class="n">__destruct_at_end</span><span class="p">(</span><span class="n">__begin_</span><span class="p">);</span><span class="err">}</span>
+</code></pre></div></div>
+<p>所以其實 <code class="highlighter-rouge">resize(0)</code> and <code class="highlighter-rouge">clear</code> 是一樣的。</p>
+
+
+    
+
+
+
+<div class="post-tags">
+  
 </div>
+  </div>
+
+  
+  <section class="comments">
+    <h2>Comments</h2>
+    
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://srhuang.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+  </section>
+
+  <section class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts-list">
+    
+  </ul>
+</section>
+
+</div>
+
 
     </main>
 
