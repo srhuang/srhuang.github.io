@@ -11,7 +11,7 @@
 
   <title>
     
-      Google Search &middot; 學徒筆記
+      What's Difference between Divide and Conquer, Backtracking, Dynamic Programming ? &middot; 學徒筆記
     
   </title>
 
@@ -35,7 +35,7 @@
 </head>
 
 
-  <body class="search">
+  <body class="post">
 
     <div id="sidebar">
   <header>
@@ -333,25 +333,154 @@
 
     <main class="container">
       <header>
-  <h1 class="page-title"><label for="search-bar">Google Search</label></h1>
+  <h1 class="post-title">What's Difference between Divide and Conquer, Backtracking, Dynamic Programming ?</h1>
 </header>
 <div class="content">
-  <form action="https://google.com/search" class="search-form">
-  <div class="search-row">
-    <input id="search-bar" type="search" name="q" />
+  <div class="post-meta">
+  <span class="post-date">31 Oct 2019</span>
+  <span class="post-categories">
+    
+      &bull;
 
-    
-    
-    
-    
-    
-    <input name="sitesearch" type="hidden"
-           value="localhost:4000/" />
+      
+      
+      
 
-    <input type="submit" value="Search" />
-  </div>
-</form>
+      
+        <a href="/category/Algorithm.html">
+          Algorithm
+        </a>
+      
+    
+  </span>
 </div>
+
+  
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+>
+</script>
+<script
+  type="text/javascript"
+  charset="utf-8"
+  src="https://vincenttam.github.io/javascripts/MathJaxLocal.js"
+>
+</script>
+
+
+  <div class="post-body">
+    <p>在刷 code 的漫長旅程中，穿梭在各個類的題目中，很容易讓人失去了方向。
+讓我們用演算法來解決人生的大小事吧！今天討論的三種方法：Divide and Conquer, Backtracking, DP，以解決人生難題為例，如何實際應用這三種方法，成功找到幸福的鑰匙。</p>
+
+<!--more-->
+<h2 id="化整為零">化整為零</h2>
+<p>今天要討論的這三種方法，最大的共同點就是「把主問題分解成一個一個的小問題，化整為零後，各個擊破。」這背後的人生哲學其實也很值得我們借鏡，當我們面臨人生大大小小的難題時，很多人會沉陷在一開始面臨的大問題中，感覺到無力、沮喪、甚至自我厭惡，進而引發自卑情結，或是轉向無用的優越情結。但總是有另外一群人，異常的冷靜，雖然還是會有情緒，但總是很快的回過神來解決問題，慢慢的把大問題分解成一個一個可以處理的小問題，然後開始動手去做。</p>
+
+<blockquote>
+  <p>演算法就是解決問題的方法。
+面對人生難題，也可以運用演算法！</p>
+</blockquote>
+
+<h2 id="divide-and-conquer-各自為政">Divide and Conquer 各自為政</h2>
+<p>Divide and Conquer 最大的特色就是「每個子問題都是獨立的」。假設今天終於有機會可以跟心儀已久的妹子出去約會，該如何設計一個成功的約會呢？面對這個大問題，可以分解成「上午的行程」、「下午的行程」、「晚上的行程」子問題，如果過程順利，還要準備「過夜行程」。</p>
+
+<p>上午行程，適合靜態的活動，也可以讓彼此暖身並且熟悉對方的節奏，一間東西好吃、氣氛很好的早午餐是更好不過的選擇了，讓彼此可以坐著好好的面對面聊天，嘗試尋找切入點，為接下來的相處做好準備。</p>
+
+<p>下午行程，根據太陽角度大致分成三點前和三點後。三點前的太陽太烈，如果安排戶外活動，容易讓人覺得煩躁，更慘的是有可能讓女生因為滿頭大汗而狼狽不堪，因此三點前的行程適合室內看看展覽，或是有冷氣的地方。當然，如果要走展覽路線，一定要確保是自己熟悉的領域，也可以藉機讓對方更認識不一樣的自己。三點後的行程就很適合戶外活動，此時的太陽不那麼炙熱，好好的享受午後時光，會讓人有幸福的錯覺，馴服她的直覺，讓你和感到幸福產生連結，就成功一半了。騎個腳踏車，爬個小山，或是逛個老街，都是很不錯的選擇，如果能有個戶外活動必須兩個人一起完成那就更好了。最後選擇可以看美景或是夕陽的地方，感嘆一下及時行樂(yolo 你懂的～)。</p>
+
+<p>晚上行程，一頓浪漫的大餐是少不了的，東西可以吞嚥就好，重點氣氛要夠，最好是有駐唱的那種，讓她有種「人生至此，夫復何求」的感覺。吃過晚餐可以先在附近走走，散步聊天，至少要撐過晚上八點，然後開始提議有間可以看夜景喝咖啡的景觀餐廳還不錯，如果對方還願意給你機會表現，此時的達陣率至少有八成了。最後就前往你去到爛掉的老地方，大家好好坐下來聊聊，心中最軟的那一塊。</p>
+
+<p>過夜行程，Motel。</p>
+
+<h2 id="backtracking-斬立決">Backtracking 斬立決</h2>
+<p>在求偶的旅程中，一定要懂的演算法就是「Backtracking」了，應該要好好的推廣這個觀念，這樣就不會有恐怖情人出現了，面對不對的人，斬立決就對了。Backtracking 其實就是窮舉所有可能，在某個階段發現該 Solution 不是對的時候，立馬停止向下展開，這種技巧叫做「pruning」，以達到優化效率的目的。</p>
+
+<h2 id="dynamic-programming-鑑往知來">Dynamic Programming 鑑往知來</h2>
+<p>DP 和 Divide and Conquer 最大的差別在於，DP 的子問題有可能會 overlapping，因此遇到以前遇過的就不需要全部重頭來過，可以鑑往知來。就像安排跟妹子約會的行程，你總是會有口袋名單，好的地方值得一去再去，因此安排行程就會越來越簡單，重點不是去了什麼地方，而是跟誰去，只要該約會地點值得信賴，就不需要再浪費心思去踩雷了，相對的你的表現也會越發自信，進而觸發對方的費洛蒙，成功達陣的機會就會大很多了，共勉之。</p>
+
+<h2 id="經典例子">經典例子</h2>
+<ul>
+  <li>
+    <p>Divide and Conquer : merge sort。每個子問題都是各自獨立，不相重複，而且必須解完所有子問題，才能解決主問題。</p>
+  </li>
+  <li>
+    <p>Backtracking : 數獨。窮舉所有可能，一旦發現該格填入數字不合法後，就不需要再往下窮舉了。</p>
+  </li>
+  <li>
+    <p>Dynamic Programming : 費式數列。使用 recursion 時，會發現有很多子問題重複計算，這時候需要 DP Table 做紀錄，一旦遇到相同子問題時，只需要查表就可，不需要重複計算，這種技巧叫做「memoization」。</p>
+  </li>
+</ul>
+
+<details>
+    <summary>memoization？memorization？
+</summary>
+「memoization」是計算機科學的特殊專有名詞，出自 Algorithm 經典書 「CLRS」p.347。
+「memorization」根據劍橋的翻譯：the act or process of learning something so that you will remember it exactly.
+</details>
+
+<h2 id="conclusion-結論">Conclusion 結論</h2>
+<p>Divide and Conquer 會聯想到「independent subproblem」；Backtracking 的特徵是「pruning」；Dynamic Programming 的核心是「memoization」。
+還有很多細節都被省略了，但希望這篇文章能夠提供「overview」的角度來思考這三個演算法，祝大家刷題愉快！</p>
+
+
+    
+
+
+
+<div class="post-tags">
+  
+</div>
+  </div>
+
+  
+  <section class="comments">
+    <h2>Comments</h2>
+    
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://srhuang.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+  </section>
+
+  <section class="related">
+  <h2>Related Posts</h2>
+  <ul class="posts-list">
+    
+  </ul>
+</section>
+
+</div>
+
+
     </main>
 
     <!-- Optional footer content -->
