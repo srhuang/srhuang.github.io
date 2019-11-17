@@ -26,6 +26,7 @@ paginate:         5
 plugins:
   - jekyll-feed
   - jekyll-gist
+  - jekyll-sitemap
   - jekyll-paginate
 
 # Sidebar link settings
