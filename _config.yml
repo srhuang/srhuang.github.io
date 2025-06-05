@@ -4,9 +4,9 @@ parse_block_html: true
 highlighter:      rouge
 
 # Setup
-title:            學徒筆記
+title:            "SR Huang"
 tagline:          'srhuang'
-description:      '邁向偉大的航道'
+description:      '學徒筆記'
 url:              https://srhuang.github.io/
 baseurl:          '/'
                   # the optional subpath of your site, e.g. "/blog"
