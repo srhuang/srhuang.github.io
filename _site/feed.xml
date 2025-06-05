@@ -1,230 +1,686 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-11-11T17:38:29+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">The Rule of Three in C++</title><link href="http://localhost:4000/c++/2019/11/11/cplusplus-002.html" rel="alternate" type="text/html" title="The Rule of Three in C++" /><published>2019-11-11T00:00:00+08:00</published><updated>2019-11-11T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/11/cplusplus-002</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/11/cplusplus-002.html">&lt;p&gt;今天來介紹 C++ 的一個重要的概念「The Rule of Three」，他是一個對於 C++ 物件導向的一個實作上的通則，會成為通則，是因為太多 programmer 犯了相同的錯誤，卻難以發現自身所犯的錯誤。至於為何麽要了解這個東西呢？就算不能在把妹的時候拿出來說嘴，也能在同事犯了這種錯誤時，說出「The Rule of Three」，會顯得有些你高深莫測，讓人對你刮目相看。或許當有天有人問說你們 Team 誰最了解 C++ 的時候，你的臉會浮在你同事的腦海中，把寫著你的名字的字條丟入火盃，僅此如此而已。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-06-06T02:39:55+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">學徒筆記</title><subtitle>邁向偉大的航道</subtitle><author><name>srhuang</name></author><entry><title type="html">Containers in C++ STL (三)</title><link href="http://localhost:4000/c++/2019/11/22/cplusplus-006.html" rel="alternate" type="text/html" title="Containers in C++ STL (三)" /><published>2019-11-22T00:00:00+08:00</published><updated>2019-11-22T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/22/cplusplus-006</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/22/cplusplus-006.html"><![CDATA[<p>這篇文章是這一系列文的最終章，主要介紹 container adaptors 和 兩個特殊用途的 containers : bitset, valarray。</p>
 
-&lt;!--more--&gt;
+<!--more-->
+<h2 id="overview">Overview</h2>
 
-&lt;h2 id=&quot;whats-the-rule-of-three&quot;&gt;What’s 「The Rule of Three」?&lt;/h2&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;The Rule of Three says that there are three member functions that go together: the destructor, the copy constructor, and the assignment operator. A class that defines a destructor should almost always define the other two members. Moreover, a class that defines a copy constructor or assignment operator should usually define the other two members as well.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h3 id="container-adaptor">Container Adaptor</h3>
 
-&lt;p&gt;簡單說就是「destructor」、「copy constructor」、「assignment operator」這三個要一起 define，不然就都不要 define。&lt;/p&gt;
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Brief</th>
+      <th>Capacity</th>
+      <th>Element Access</th>
+      <th>Modifiers</th>
+      <th>Others</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>stack</td>
+      <td>“deque (vector, list)”</td>
+      <td>“size, empty”</td>
+      <td>top</td>
+      <td>“push, pop”</td>
+      <td>swap</td>
+    </tr>
+    <tr>
+      <td>queue</td>
+      <td>deque (list)</td>
+      <td>“size, empty”</td>
+      <td>“front, back”</td>
+      <td>“push, pop”</td>
+      <td>swap</td>
+    </tr>
+    <tr>
+      <td>priority_queue</td>
+      <td>“max heap, vector is used”</td>
+      <td>“size, empty”</td>
+      <td>top</td>
+      <td>“push, pop”</td>
+      <td>swap</td>
+    </tr>
+  </tbody>
+</table>
 
-&lt;h2 id=&quot;不遵守會怎樣嗎&quot;&gt;不遵守會怎樣嗎？&lt;/h2&gt;
-&lt;p&gt;請參考下面的例子：only destructor&lt;/p&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IntVec&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;nl&quot;&gt;public:&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+<h3 id="other-containers">Other containers</h3>
 
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
-   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Trouble!&lt;/span&gt;
-   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Shallow Copy : Default assignment operator 是直接 copy values，對於 pointer 而言就是 shallow copy，也就是 y.data=x.data (address to data memory)，也就是 x.data 和 y.data 所指的是同一塊 memory。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;RAII : 離開 scope 就會 call object destructor，因此離開 main function 會先 call y destructor，然後就會 delete data memory，接著再 call x destructor，也會 delete data memory，就會發現該 memory area 已經被 free not allocate，進而產生 runtime error。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Brief</th>
+      <th>Meta</th>
+      <th>Element Access</th>
+      <th>Modifiers</th>
+      <th>Others</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>bitset</td>
+      <td>bitwise</td>
+      <td>“size, count, any, none, all”</td>
+      <td>“test, operator[]”</td>
+      <td>“set, reset, flip”</td>
+      <td>“to_string, to_ulong, to_ullong”</td>
+    </tr>
+    <tr>
+      <td>valarray</td>
+      <td>array</td>
+      <td>“size, max, min, sum”</td>
+      <td>operator[]</td>
+      <td>“shift, cshift, operator=, resize”</td>
+      <td>“apply, swap”</td>
+    </tr>
+  </tbody>
+</table>
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;a.out(24257,0x10ba57dc0) malloc: *** error for object 0x7ff306c01750: pointer being freed was not allocated
+<h2 id="sample-code">Sample Code</h2>
+<ul>
+  <li><a href="https://github.com/srhuang/c_plus_plus/tree/master/Containers/ContainerAdaptors">github : c_plus_plus/Containers/ContainerAdaptors/</a></li>
+  <li><a href="https://github.com/srhuang/c_plus_plus/tree/master/Containers/Others">github : c_plus_plus/Containers/Others/</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[這篇文章是這一系列文的最終章，主要介紹 container adaptors 和 兩個特殊用途的 containers : bitset, valarray。]]></summary></entry><entry><title type="html">Containers in C++ STL (二)</title><link href="http://localhost:4000/c++/2019/11/17/cplusplus-005.html" rel="alternate" type="text/html" title="Containers in C++ STL (二)" /><published>2019-11-17T00:00:00+08:00</published><updated>2019-11-17T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/17/cplusplus-005</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/17/cplusplus-005.html"><![CDATA[<p>這篇文章來介紹 Associative containers and Unordered associative containers。
+associative containers 關心的是 element 是否屬於同一個 set，因此對於每個 associative containers 而言，find() function 是個相當關鍵且基本的 member function。「set」是 for 一般的 single data；「map」是 for key-value pair data。</p>
+
+<!--more-->
+
+<h2 id="overview">Overview</h2>
+<p>我們嘗試一次來觀察所有的 associative containers，不論是 ordered, unordered，還是 single key or multiple keys，並且一起討論這些 containers 的特色和優缺點。</p>
+
+<h3 id="associative-containers-overview">Associative containers Overview</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Brief</th>
+      <th>Capacity</th>
+      <th>Element Access</th>
+      <th>Modifiers</th>
+      <th>Others</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>set</td>
+      <td>Binary Search Tree (RB-tree)</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>multiset</td>
+      <td>Binary Search Tree (RB-tree)</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>map</td>
+      <td>Binary Search Tree (RB-tree)</td>
+      <td>“size, empty”</td>
+      <td>“operator [], at”</td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>multimap</td>
+      <td>Binary Search Tree (RB-tree)</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="unordered-associative-containers-overview">Unordered associative containers Overview</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Brief</th>
+      <th>Capacity</th>
+      <th>Element Access</th>
+      <th>Modifiers</th>
+      <th>Others</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>unordered_set</td>
+      <td>Hash Table</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>unordered_multiset</td>
+      <td>Hash Table</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>unordered_map</td>
+      <td>Hash Table</td>
+      <td>“size, empty”</td>
+      <td>“operator [], at”</td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+    <tr>
+      <td>unordered_multimap</td>
+      <td>Hash Table</td>
+      <td>“size, empty”</td>
+      <td> </td>
+      <td>“insert, erase, clear, swap”</td>
+      <td>“find, count”</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="data-structure">Data Structure</h2>
+<p>當我們在研究一個 container 的時候，會先要知道它背後實作的 data structure，因為每個 data structure 都其特性，這樣可以幫助我們理解該 container 的優缺點和特色差異。</p>
+
+<h3 id="associative-containers-using-binary-search-tree">Associative containers Using Binary Search Tree</h3>
+<p>對於 associative containers 而言，快速找到 element 是個關鍵的部分，因此 (ordered) associative containers 採用 binary search tree，search element 的複雜度為 $log(n)$。</p>
+
+<h3 id="unordered-associative-containers-using-hash-table">Unordered associative containers Using Hash Table</h3>
+<p>使用 Hash table 的好處是速度很快，find(search) time is constant。但它就不具備有 sorted data 的功能。</p>
+
+<h2 id="element-access">Element Access</h2>
+<p>你會發現只有 map and unordered_map 有直接 access element 的能力(非random access)，主要原因是：</p>
+<ul>
+  <li>associative containers 是想要快速的知道該 element 是否存在該 set 中，加上背後實作的 data structures 的緣故，基本上並不支援 random access。</li>
+  <li>map overriding operator[], at()，主要不是要 random access，而是可以根據給定的 key，找到 value。</li>
+  <li>multimap 如果給定一個 key，有可能會回傳多個 values，因此並不支援 operator [], at()。</li>
+</ul>
+
+<h2 id="modifiers">Modifiers</h2>
+<h3 id="insert-的種類">insert() 的種類</h3>
+<p>基本上分成以下四種：</p>
+<ul>
+  <li>copy insertion</li>
+  <li>move insertion</li>
+  <li>range insertion</li>
+  <li>initializer list insertion</li>
+</ul>
+
+<p>詳細的實作方法請見 github source code。</p>
+
+<h3 id="erase-的種類">erase() 的種類</h3>
+<p>基本上分成三種：</p>
+<ul>
+  <li>erase by key</li>
+  <li>erase by position</li>
+  <li>erase by range</li>
+</ul>
+
+<h3 id="clear-and-swap">clear() and swap()</h3>
+<p>基本上用法都和之前一樣。</p>
+
+<h2 id="others--find-count">Others : find() count()</h2>
+<p>不管是 Associative containers or Unordered associative containers 用法都是一樣的，因為這就是這種 container 類型的特色和最主要使用的情境。</p>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://blog.csdn.net/vevenlcf/article/details/51743058">C++ STL 之 unordered_set 介绍</a></li>
+  <li><a href="https://www.techiedelight.com/initialize-set-unordered_set-cpp/">Initialize a std::set or std::unordered_set in C++ - Techie Delight</a></li>
+</ul>
+
+<h2 id="sample-code">Sample Code</h2>
+<ul>
+  <li><a href="https://github.com/srhuang/c_plus_plus/tree/master/Containers/AssociativeContainers">github : c_plus_plus/Containers/AssociativeContainers/</a></li>
+  <li><a href="https://github.com/srhuang/c_plus_plus/tree/master/Containers/UnorderedAssociativeContainers">github : c_plus_plus/Containers/UnorderedAssociativeContainers/</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[這篇文章來介紹 Associative containers and Unordered associative containers。 associative containers 關心的是 element 是否屬於同一個 set，因此對於每個 associative containers 而言，find() function 是個相當關鍵且基本的 member function。「set」是 for 一般的 single data；「map」是 for key-value pair data。]]></summary></entry><entry><title type="html">Containers in C++ STL (一)</title><link href="http://localhost:4000/c++/2019/11/15/cplusplus-004.html" rel="alternate" type="text/html" title="Containers in C++ STL (一)" /><published>2019-11-15T00:00:00+08:00</published><updated>2019-11-15T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/15/cplusplus-004</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/15/cplusplus-004.html"><![CDATA[<p>「工欲善其事，必先利其器。」在開始使用 C++ 解決問題之前，必須先熟悉 C++ 的 containers，這樣才能利用這些 containers 來幫助我們解決更困難的問題。如何使用這些 containers 是基本且無需討論的，自行上網查詢就可以獲得技能，我們討論的將會著重在這些 containers 的差異，以及優缺點和特色。以更高層次的學習 C++ containers 是能夠知道在哪些情境或是場景下，該使用哪個 container，讓我們的學習更貼近真實場景，實際地做出判斷並且解決問題。</p>
+
+<!--more-->
+
+<h2 id="introduction">Introduction</h2>
+<blockquote>
+  <p>A container is a holder object that stores a collection of other objects (its elements). They are implemented as class templates, which allows a great flexibility in the types supported as elements.
+The container manages the storage space for its elements and provides member functions to access them, either directly or through iterators.</p>
+</blockquote>
+
+<p>C++ containers 基本上分成四大類：</p>
+<ul>
+  <li>Sequence containers</li>
+  <li>Container adaptors</li>
+  <li>Associative containers</li>
+  <li>Unordered associative containers。</li>
+</ul>
+
+<p>還有兩個是特殊 containers : valarray, bitset。</p>
+
+<p>我們將以各種角度來探討分析每個 container 的特性和比較，並且將 member function 分成數類來討論，更能有架構的來學習 C++ containers。</p>
+
+<h2 id="sequence-containers">Sequence containers</h2>
+<blockquote>
+  <p>Sequence containers implement data structures which can be accessed sequentially.</p>
+</blockquote>
+
+<blockquote>
+  <p>In computing, sequence containers refer to a group of container class templates in the standard library of the C++ programming language that implement storage of data elements.</p>
+</blockquote>
+
+<p>我們分成 Iterators、Capacity、Element Access、Modifiers、Others 等五大主題來觀察這些 containers 的用法。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Brief</th>
+      <th>Iterators</th>
+      <th>Capacity</th>
+      <th>Element Access</th>
+      <th>Modifiers</th>
+      <th>Others</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>array</td>
+      <td>Static contiguous array</td>
+      <td>begin, end</td>
+      <td>size, empty</td>
+      <td>operator[], at, front, back</td>
+      <td>swap</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>vector</td>
+      <td>Dynamic contiguous array</td>
+      <td>begin, end</td>
+      <td>size, empty, capacity</td>
+      <td>operator[], at, front, back</td>
+      <td>push_back, pop_back, insert, erase, swap, clear</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>deque</td>
+      <td>Double-ended queue</td>
+      <td>begin, end</td>
+      <td>size, empty</td>
+      <td>operator[], at, front, back</td>
+      <td>push_back, pop_back, insert, erase, swap, clear</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>list</td>
+      <td>Doubly-linked list</td>
+      <td>begin, end</td>
+      <td>size, empty</td>
+      <td>front, back</td>
+      <td>push_back, pop_back, insert, erase, swap, clear</td>
+      <td>sort, reverse</td>
+    </tr>
+    <tr>
+      <td>forward_list</td>
+      <td>Singly-linked list</td>
+      <td>begin, end</td>
+      <td>empty</td>
+      <td>front</td>
+      <td>push_front, pop_front, insert_after, erase_after, swap, clear</td>
+      <td>sort, reverse</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="capacity">Capacity</h3>
+<h4 id="在-sequence-containers-中只有-vector-擁有-capacity-member-function">在 sequence containers 中，只有 vector 擁有 capacity member function</h4>
+<p>主要原因是，vector 是個動態長大的 array，為了效率考量，當 push_back 需要新增空間的時候，一次會多要多餘的空間，以備未來有新增 data 的需求。因此你會發現 vector 的 size and capacity 常常是不一樣的，因為他們背後所代表的意義不同：size 是指實際 data 的數量；capacity 是指 vector 所佔的空間，包含預留的多餘空間。</p>
+
+<blockquote>
+  <p>Instead, vector containers may allocate some extra storage to accommodate for possible growth, and thus the container may have an actual capacity greater than the storage strictly needed to contain its elements (i.e., its size). Libraries can implement different strategies for growth to balance between memory usage and reallocations, but in any case, reallocations should only happen at logarithmically growing intervals of size so that the insertion of individual elements at the end of the vector can be provided with amortized constant time complexity</p>
+</blockquote>
+
+<h3 id="element-access">Element Access</h3>
+<h4 id="operator-at-is-related-to-random-access">operator[], at() is related to Random Access</h4>
+<p>vector、array、deque 這三個 container 基本上是以連續的記憶體位置為基礎，因此 support random access，而具體的 member function 就是 operator[], at()。由上述表格可以得知，這三個 container 和 list, forward_list(主要是由 linked list 組成)在 element access 上最大的差異就是「Random Access」。以 Array 為基礎實作的 containers 通常具有「Random Access」的特色；以 linked list 為基礎實作的 containers 則不具備。</p>
+
+<h4 id="no-back-member-function-for-forward_list">No back() member function for forward_list</h4>
+<p>你可以發現到 forward_list 並沒有 back member function，為什麼呢？主要原因是 singly-linked list push and pop 都是在 front，因此並沒有 data 紀錄 back element，也就無法擁有 back member function。</p>
+
+<blockquote>
+  <p>forward_list objects are thus more efficient than list objects, although they can only be iterated forwards.</p>
+</blockquote>
+
+<h3 id="modifiers">Modifiers</h3>
+<h4 id="array-基本上不具備-modifiers-functions因為不需要">Array 基本上不具備 Modifiers functions，因為不需要</h4>
+<p>array 通常是 compiler time 就決定好空間，不會有 capacity 和 size 不同的問題，因此可以直接修改、新增 element，也就不需要 modifiers functions。你或許會問那為什麼 vector 就需要了呢？主要原因是 vector 的 capacity and size 常常不同，因此需要有 class 包裝 information 讓 user 可以安全的 push back or pop back。</p>
+
+<h4 id="forward_listpush_front-and-pop_front">forward_list:push_front() and pop_front()</h4>
+<p>forward_list 是由 singly linked list 所構成，push and pop element 都是從 head 端，因此 modifiers for forward_list only support push_front and pop_front，如同 there is no back for forward_list。</p>
+
+<h4 id="forward_listinsert_after-erase_after">forward_list:insert_after() erase_after()</h4>
+<p>forward_list 是由 singly linked list 所構成，因此沒有 previous pointer，只能 insert or erase 在該 element 之後；而一般的 insert and erase 意指 加入或刪除該 element 之前，因此 forward_list 的 insert and erase 才會有 after postfix。</p>
+
+<h3 id="otherssort">Others:sort()</h3>
+<p>linked list 並非 random access，因此 list::iterator 並不是 random access iterator，所以無法使用 std::sort。非 random access 的 containers 必須使用該 container class 所提供的 member function，所以你會發現只有 linked list 相關的 containers (list, forward_list)才有 sort。</p>
+<ol>
+  <li>std::sort needs random access iterator.</li>
+  <li>linked list based containers can NOT random access.</li>
+  <li>linked list based containers SHOULD have its own sort member function.</li>
+</ol>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="http://www.cplusplus.com/reference/stl/">cppreference.com - Standard Containers</a></li>
+  <li><a href="https://larry850806.github.io/2016/06/06/STL1/">STL 容器 (一) - 基本介紹</a></li>
+  <li><a href="https://medium.com/@gx578007/searching-vector-set-and-unordered-set-6649d1aa7752">Searching: vector, set and unordered_set</a></li>
+  <li><a href="https://www.techiedelight.com/convert-c-style-array-into-std-array-container/">Convert C-style array into std::array container in C++</a></li>
+  <li><a href="https://www.geeksforgeeks.org/containers-cpp-stl/">Containers in C++ STL</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Sequence_container_(C%2B%2B)">Wiki - Sequence container (C++)</a></li>
+</ul>
+
+<h2 id="sample-code">Sample Code</h2>
+<p><a href="https://github.com/srhuang/c_plus_plus/tree/master/Containers/SequenceContainers">github : c_plus_plus/Containers/SequenceContainers/</a></p>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[「工欲善其事，必先利其器。」在開始使用 C++ 解決問題之前，必須先熟悉 C++ 的 containers，這樣才能利用這些 containers 來幫助我們解決更困難的問題。如何使用這些 containers 是基本且無需討論的，自行上網查詢就可以獲得技能，我們討論的將會著重在這些 containers 的差異，以及優缺點和特色。以更高層次的學習 C++ containers 是能夠知道在哪些情境或是場景下，該使用哪個 container，讓我們的學習更貼近真實場景，實際地做出判斷並且解決問題。]]></summary></entry><entry><title type="html">Resource Acquisition Is Initialization (RAII)</title><link href="http://localhost:4000/c++/2019/11/11/cplusplus-003.html" rel="alternate" type="text/html" title="Resource Acquisition Is Initialization (RAII)" /><published>2019-11-11T00:00:00+08:00</published><updated>2019-11-11T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/11/cplusplus-003</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/11/cplusplus-003.html"><![CDATA[<p>RAII 是 C++ 之父 Bjarne Stroustrup (比雅尼·史特勞斯特魯普) 所提出來的，關於物件導向的資源管理問題，一種簡潔的解決方法。主要解決了 resource leak 的問題。</p>
+
+<p>Object 建立的時候, resource 取得的是時候是經由 constructor 來初始. 結束的時候便透過 destructor來釋放. 讓 life cycle of a resource 和 lifetime of an object 完全綁在一起，藉以解決可能的 resource leak 問題。</p>
+
+<blockquote>
+  <p>Resource Acquisition Is Initialization or RAII, is a C++ programming technique which binds the life cycle of a resource that must be acquired before use (allocated heap memory, thread of execution, open socket, open file, locked mutex, disk space, database connection—anything that exists in limited supply) to the lifetime of an object.</p>
+</blockquote>
+
+<!--more-->
+
+<h2 id="範例mutex">範例：Mutex</h2>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">m</span><span class="p">;</span>
+ 
+<span class="kt">void</span> <span class="nf">bad</span><span class="p">()</span> 
+<span class="p">{</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>                    <span class="c1">// acquire the mutex</span>
+    <span class="n">f</span><span class="p">();</span>                         <span class="c1">// if f() throws an exception, the mutex is never released</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">everything_ok</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span> <span class="c1">// early return, the mutex is never released</span>
+    <span class="n">m</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>                  <span class="c1">// if bad() reaches this statement, the mutex is released</span>
+<span class="p">}</span>
+ 
+<span class="kt">void</span> <span class="n">good</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lk</span><span class="p">(</span><span class="n">m</span><span class="p">);</span> <span class="c1">// RAII class: mutex acquisition is initialization</span>
+    <span class="n">f</span><span class="p">();</span>                               <span class="c1">// if f() throws an exception, the mutex is released</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">everything_ok</span><span class="p">())</span> <span class="k">return</span><span class="p">;</span>       <span class="c1">// early return, the mutex is released</span>
+<span class="p">}</span>                                      <span class="c1">// if good() returns normally, the mutex is released</span>
+</code></pre></div></div>
+<ul>
+  <li>bad function : mutex 有可能不會被 release。</li>
+  <li>good function : mutex 被包在 class 中，因此當離開 scope 時，object 會 call destructor 而自動 release 。</li>
+</ul>
+
+<h2 id="範例file">範例：File</h2>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">file</span>
+<span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">file</span><span class="p">(</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">m_fileHandle</span><span class="o">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">cstr</span><span class="p">());</span>
+    <span class="p">}</span>
+    <span class="o">~</span><span class="n">file</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">fclose</span><span class="p">(</span><span class="n">m_fileHandle</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="c1">//</span>
+<span class="nl">private:</span>
+    <span class="n">handle</span> <span class="n">m_fileHandle</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">fun1</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">file</span> <span class="n">myfile</span><span class="p">(</span><span class="s">"my.txt"</span><span class="p">);</span>
+     <span class="c1">//操作文件</span>
+<span class="p">}</span> <span class="c1">//destructor</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+<ol>
+  <li>利用 class 封裝所有 resource :
+    <ul>
+      <li>the constructor acquires the resource and establishes all class invariants or throws an exception if that cannot be done.</li>
+      <li>the destructor releases the resource and never throws exceptions</li>
+    </ul>
+  </li>
+  <li>藉由 class 的實體 來操作 resource。</li>
+</ol>
+
+<h2 id="reference">Reference</h2>
+<ul>
+  <li><a href="https://www.cnblogs.com/youxin/p/3794706.html">c++ RAII 资源管理就是初始化 - youxin - 博客园</a></li>
+  <li><a href="https://zh.wikipedia.org/wiki/RAII">RAII-Wiki</a></li>
+  <li><a href="http://www.stroustrup.com/bs_faq2.html#finally">Stroustrup: C++ Style and Technique FAQ</a></li>
+  <li><a href="https://en.cppreference.com/w/cpp/language/raii">cppreference.com - RAII</a></li>
+  <li><a href="http://yi-jyun.blogspot.com/2017/09/raii-resource-acquisition-is.html">RAII 概念(Resource acquisition is initialization)</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[RAII 是 C++ 之父 Bjarne Stroustrup (比雅尼·史特勞斯特魯普) 所提出來的，關於物件導向的資源管理問題，一種簡潔的解決方法。主要解決了 resource leak 的問題。]]></summary></entry><entry><title type="html">The Rule of Three in C++</title><link href="http://localhost:4000/c++/2019/11/11/cplusplus-002.html" rel="alternate" type="text/html" title="The Rule of Three in C++" /><published>2019-11-11T00:00:00+08:00</published><updated>2019-11-11T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/11/11/cplusplus-002</id><content type="html" xml:base="http://localhost:4000/c++/2019/11/11/cplusplus-002.html"><![CDATA[<p>今天來介紹 C++ 的一個重要的概念「The Rule of Three」，他是一個對於 C++ 物件導向的一個實作上的通則，會成為通則，是因為太多 programmer 犯了相同的錯誤，卻難以發現自身所犯的錯誤。至於為何麽要了解這個東西呢？就算不能在把妹的時候拿出來說嘴，也能在同事犯了這種錯誤時，說出「The Rule of Three」，會顯得有些你高深莫測，讓人對你刮目相看。或許當有天有人問說你們 Team 誰最了解 C++ 的時候，你的臉會浮在你同事的腦海中，把寫著你的名字的字條丟入火盃，僅此如此而已。</p>
+
+<!--more-->
+
+<h2 id="whats-the-rule-of-three">What’s 「The Rule of Three」?</h2>
+<blockquote>
+  <p>The Rule of Three says that there are three member functions that go together: the destructor, the copy constructor, and the assignment operator. A class that defines a destructor should almost always define the other two members. Moreover, a class that defines a copy constructor or assignment operator should usually define the other two members as well.</p>
+</blockquote>
+
+<p>簡單說就是「destructor」、「copy constructor」、「assignment operator」這三個要一起 define，不然就都不要 define。</p>
+
+<h2 id="不遵守會怎樣嗎">不遵守會怎樣嗎？</h2>
+<p>請參考下面的例子：only destructor</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">IntVec</span> <span class="p">{</span>
+<span class="nl">public:</span>
+   <span class="n">IntVec</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span><span class="o">:</span> <span class="n">data</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">n</span><span class="p">])</span> <span class="p">{</span> <span class="p">}</span>
+   <span class="o">~</span><span class="n">IntVec</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span> <span class="p">};</span>
+   <span class="kt">int</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+      <span class="p">{</span> <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">];</span> <span class="p">}</span>
+   <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+      <span class="p">{</span> <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">];</span> <span class="p">}</span>
+
+<span class="nl">private:</span>
+   <span class="kt">int</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+   <span class="n">IntVec</span> <span class="n">x</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+   <span class="n">IntVec</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>   <span class="c1">// Trouble!</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>
+    <p>Shallow Copy : Default assignment operator 是直接 copy values，對於 pointer 而言就是 shallow copy，也就是 y.data=x.data (address to data memory)，也就是 x.data 和 y.data 所指的是同一塊 memory。</p>
+  </li>
+  <li>
+    <p>RAII : 離開 scope 就會 call object destructor，因此離開 main function 會先 call y destructor，然後就會 delete data memory，接著再 call x destructor，也會 delete data memory，就會發現該 memory area 已經被 free not allocate，進而產生 runtime error。</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a.out(24257,0x10ba57dc0) malloc: *** error for object 0x7ff306c01750: pointer being freed was not allocated
 a.out(24257,0x10ba57dc0) malloc: *** set a breakpoint in malloc_error_break to debug
 Abort trap: 6
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;上面是少了 assignment operator 的例子，copy constructor 也是同理：&lt;/p&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Trouble!&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;結論是，只要具備以下三個條件，就會產生此 error&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Data member is the pointer.&lt;/li&gt;
-  &lt;li&gt;There is a destructor. (free resource)&lt;/li&gt;
-  &lt;li&gt;There is no assignment operator and copy constructor. (shallow copy)&lt;/li&gt;
-&lt;/ul&gt;
+</code></pre></div></div>
+<p>上面是少了 assignment operator 的例子，copy constructor 也是同理：</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IntVec</span> <span class="nf">y</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>   <span class="c1">// Trouble!</span>
+</code></pre></div></div>
+<p>結論是，只要具備以下三個條件，就會產生此 error</p>
+<ul>
+  <li>Data member is the pointer.</li>
+  <li>There is a destructor. (free resource)</li>
+  <li>There is no assignment operator and copy constructor. (shallow copy)</li>
+</ul>
 
-&lt;h2 id=&quot;正確的寫法&quot;&gt;正確的寫法&lt;/h2&gt;
-&lt;p&gt;下面的例子將展示符合「The Rule of Three」的寫法：&lt;/p&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;IntVec&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;nl&quot;&gt;public:&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[](&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+<h2 id="正確的寫法">正確的寫法</h2>
+<p>下面的例子將展示符合「The Rule of Three」的寫法：</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">IntVec</span> <span class="p">{</span>
+<span class="nl">public:</span>
+   <span class="n">IntVec</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span><span class="o">:</span> <span class="n">data</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">n</span><span class="p">]),</span> <span class="n">size</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+   <span class="o">~</span><span class="n">IntVec</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span> <span class="p">};</span>
+   <span class="kt">int</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+      <span class="p">{</span> <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">];</span> <span class="p">}</span>
+   <span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span>
+      <span class="p">{</span> <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">];</span> <span class="p">}</span>
 
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;
-   &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+   <span class="n">IntVec</span><span class="p">(</span><span class="k">const</span> <span class="n">IntVec</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">data</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">]),</span>
+      <span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+   <span class="p">}</span>
+   <span class="n">IntVec</span><span class="o">&amp;</span>
+   <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">IntVec</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kt">int</span><span class="o">*</span> <span class="n">newdata</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">];</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="p">,</span><span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="o">+</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">,</span> <span class="n">newdata</span><span class="p">);</span>
+      <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">newdata</span><span class="p">;</span>
+      <span class="n">size</span> <span class="o">=</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
+      <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+   <span class="p">}</span>
 
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
-   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;我們先分析assignment operator 做了什麼事情：實作了 deep copy&lt;/p&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;
-   &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;再來看看 copy constructor：也是實作了 deep copy&lt;/p&gt;
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;copy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;有人可能會好奇，為什麼 assignment operator 會多了 delete original data，主要原因是在 x assign 給 y 的時候，y 會先 create object(constructor) ，此時 y 會有擁有一個 original data，如果不 free 的話，會造成 memory leak。&lt;/p&gt;
+<span class="nl">private:</span>
+   <span class="kt">int</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
+   <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>我們先分析assignment operator 做了什麼事情：實作了 deep copy</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IntVec</span><span class="o">&amp;</span>
+   <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">IntVec</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kt">int</span><span class="o">*</span> <span class="n">newdata</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">];</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="p">,</span><span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="o">+</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">,</span> <span class="n">newdata</span><span class="p">);</span>
+      <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">newdata</span><span class="p">;</span>
+      <span class="n">size</span> <span class="o">=</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
+      <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+   <span class="p">}</span>
+</code></pre></div></div>
+<p>再來看看 copy constructor：也是實作了 deep copy</p>
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IntVec</span><span class="p">(</span><span class="k">const</span> <span class="n">IntVec</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">data</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">]),</span>
+      <span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">v</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+   <span class="p">}</span>
+</code></pre></div></div>
+<p>有人可能會好奇，為什麼 assignment operator 會多了 delete original data，主要原因是在 x assign 給 y 的時候，y 會先 create object(constructor) ，此時 y 會有擁有一個 original data，如果不 free 的話，會造成 memory leak。</p>
 
-&lt;h2 id=&quot;something-to-discuss&quot;&gt;Something to Discuss&lt;/h2&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Although a class with a destructor almost always needs a copy constructor and an assignment operator, the reverse is not always true.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h2 id="something-to-discuss">Something to Discuss</h2>
+<blockquote>
+  <p>Although a class with a destructor almost always needs a copy constructor and an assignment operator, the reverse is not always true.</p>
+</blockquote>
 
-&lt;p&gt;根據上面的範例，我們可以知道，如果有實作 destructor ，代表對於該 class 有其他資源需要釋放，據此也應該實作 copy constructor and assignment operator。但是反之卻不是如此。&lt;/p&gt;
+<p>根據上面的範例，我們可以知道，如果有實作 destructor ，代表對於該 class 有其他資源需要釋放，據此也應該實作 copy constructor and assignment operator。但是反之卻不是如此。</p>
 
-&lt;blockquote&gt;
-  &lt;p&gt;The reason is that not every copy constructor or assignment operator allocates resources, so not every copy constructor or assignment operator requires a destructor in order to free those resources.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>The reason is that not every copy constructor or assignment operator allocates resources, so not every copy constructor or assignment operator requires a destructor in order to free those resources.</p>
+</blockquote>
 
-&lt;p&gt;其實重點是在「有沒有需要處理資源的 allocate and free 」，下面的例子將說明有些 case 在擁有 copy constructor and an assignment operator 的情況下，並不需要 destructor：&lt;/p&gt;
+<p>其實重點是在「有沒有需要處理資源的 allocate and free 」，下面的例子將說明有些 case 在擁有 copy constructor and an assignment operator 的情況下，並不需要 destructor：</p>
 
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Thing&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-&lt;span class=&quot;nl&quot;&gt;public:&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;Thing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* ... */&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;Thing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// don't copy the cache&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;Thing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;operator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Thing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// copy the data&lt;/span&gt;
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Thing</span> <span class="p">{</span>
+<span class="nl">public:</span>
+   <span class="n">Thing</span><span class="p">()</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}</span>
+   <span class="n">Thing</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">)</span><span class="o">:</span>
+      <span class="n">data</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+   <span class="p">{</span> <span class="p">}</span>  <span class="c1">// don't copy the cache</span>
+   <span class="n">Thing</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">t</span><span class="p">.</span><span class="n">data</span><span class="p">;</span> <span class="c1">// copy the data</span>
 
-      &lt;span class=&quot;c1&quot;&gt;// clear the cache&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;nl&quot;&gt;private:&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;Cache&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;這個例子說明，在我們需要 copy constructor (不需要 copy cache) 和 assignment operator (需要 clear cache) 的情況下，並不需要 destructor。主要原因是，data member 並不包含 pointer ，也就是說此 class 並沒有 allocate(new) resource，因此也不需要 destructor。&lt;/p&gt;
+      <span class="c1">// clear the cache</span>
+      <span class="n">cache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">();</span>
+   <span class="p">}</span>
+<span class="nl">private:</span>
+   <span class="n">Data</span> <span class="n">data</span><span class="p">;</span>
+   <span class="n">Cache</span> <span class="n">cache</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>這個例子說明，在我們需要 copy constructor (不需要 copy cache) 和 assignment operator (需要 clear cache) 的情況下，並不需要 destructor。主要原因是，data member 並不包含 pointer ，也就是說此 class 並沒有 allocate(new) resource，因此也不需要 destructor。</p>
 
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;為什麼 destructor 就一定要 copy constructor and assignment operator 呢？原因是，需要 destructor 意味著需要 deallocates a resource ，如果該 resource 需要 deallocates ，那麼就需要在 copy constructor and assignment operator 中實作 deep copy ，否則該 resource 就會 free twice。&lt;/p&gt;
+<h2 id="conclusion">Conclusion</h2>
+<p>為什麼 destructor 就一定要 copy constructor and assignment operator 呢？原因是，需要 destructor 意味著需要 deallocates a resource ，如果該 resource 需要 deallocates ，那麼就需要在 copy constructor and assignment operator 中實作 deep copy ，否則該 resource 就會 free twice。</p>
 
-&lt;p&gt;為什麼擁有copy constructor and assignment operator，不一定需要 destructor 呢？原因是，copy constructor and assignment operator 的目的並不一定是牽扯到 allocate resource，上面的例子就清楚的說明此事，只要不牽扯到 allocate resource ，就不需要 destructor。&lt;/p&gt;
+<p>為什麼擁有copy constructor and assignment operator，不一定需要 destructor 呢？原因是，copy constructor and assignment operator 的目的並不一定是牽扯到 allocate resource，上面的例子就清楚的說明此事，只要不牽扯到 allocate resource ，就不需要 destructor。</p>
 
-&lt;p&gt;當你理解以上敘述，再來看 reference 出處的原文，相信你會讀起來輕鬆寫意，建議大家還是要去參照原文，畢竟我只是簡化其中，當個敲門磚罷了，希望有幫助到大家！&lt;/p&gt;
+<p>當你理解以上敘述，再來看 reference 出處的原文，相信你會讀起來輕鬆寫意，建議大家還是要去參照原文，畢竟我只是簡化其中，當個敲門磚罷了，希望有幫助到大家！</p>
 
-&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;原文：&lt;a href=&quot;https://www.drdobbs.com/c-made-easier-the-rule-of-three/184401400&quot;&gt;C++ Made Easier: The Rule of Three&lt;/a&gt;
-By Andrew Koenig and Barbara E. Moo, June 01, 2001&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/rule-of-three-in-cpp/&quot;&gt;Rule Of Three in C++&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/%E4%B8%89%E6%B3%95%E5%89%87&quot;&gt;Wiki&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>srhuang</name></author><summary type="html">今天來介紹 C++ 的一個重要的概念「The Rule of Three」，他是一個對於 C++ 物件導向的一個實作上的通則，會成為通則，是因為太多 programmer 犯了相同的錯誤，卻難以發現自身所犯的錯誤。至於為何麽要了解這個東西呢？就算不能在把妹的時候拿出來說嘴，也能在同事犯了這種錯誤時，說出「The Rule of Three」，會顯得有些你高深莫測，讓人對你刮目相看。或許當有天有人問說你們 Team 誰最了解 C++ 的時候，你的臉會浮在你同事的腦海中，把寫著你的名字的字條丟入火盃，僅此如此而已。</summary></entry><entry><title type="html">What’s Difference between Divide and Conquer, Backtracking, Dynamic Programming ?</title><link href="http://localhost:4000/algorithm/2019/10/31/algorithm-001.html" rel="alternate" type="text/html" title="What's Difference between Divide and Conquer, Backtracking, Dynamic Programming ?" /><published>2019-10-31T00:00:00+08:00</published><updated>2019-10-31T00:00:00+08:00</updated><id>http://localhost:4000/algorithm/2019/10/31/algorithm-001</id><content type="html" xml:base="http://localhost:4000/algorithm/2019/10/31/algorithm-001.html">&lt;p&gt;在刷 code 的漫長旅程中，穿梭在各個類型的題目中，很容易讓人失去了方向。
-讓我們用演算法來解決人生的大小事吧！今天討論的三種方法：Divide and Conquer, Backtracking, DP，以解決人生難題為例，如何實際應用這三種方法，成功找到幸福的鑰匙。&lt;/p&gt;
+<h2 id="reference">Reference</h2>
+<ul>
+  <li>原文：<a href="https://www.drdobbs.com/c-made-easier-the-rule-of-three/184401400">C++ Made Easier: The Rule of Three</a>
+By Andrew Koenig and Barbara E. Moo, June 01, 2001</li>
+  <li><a href="https://www.geeksforgeeks.org/rule-of-three-in-cpp/">Rule Of Three in C++</a></li>
+  <li><a href="https://zh.wikipedia.org/wiki/%E4%B8%89%E6%B3%95%E5%89%87">Wiki</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[今天來介紹 C++ 的一個重要的概念「The Rule of Three」，他是一個對於 C++ 物件導向的一個實作上的通則，會成為通則，是因為太多 programmer 犯了相同的錯誤，卻難以發現自身所犯的錯誤。至於為何麽要了解這個東西呢？就算不能在把妹的時候拿出來說嘴，也能在同事犯了這種錯誤時，說出「The Rule of Three」，會顯得有些你高深莫測，讓人對你刮目相看。或許當有天有人問說你們 Team 誰最了解 C++ 的時候，你的臉會浮在你同事的腦海中，把寫著你的名字的字條丟入火盃，僅此如此而已。]]></summary></entry><entry><title type="html">What’s Difference between Divide and Conquer, Backtracking, Dynamic Programming ?</title><link href="http://localhost:4000/algorithm/2019/10/31/algorithm-001.html" rel="alternate" type="text/html" title="What’s Difference between Divide and Conquer, Backtracking, Dynamic Programming ?" /><published>2019-10-31T00:00:00+08:00</published><updated>2019-10-31T00:00:00+08:00</updated><id>http://localhost:4000/algorithm/2019/10/31/algorithm-001</id><content type="html" xml:base="http://localhost:4000/algorithm/2019/10/31/algorithm-001.html"><![CDATA[<p>在刷 code 的漫長旅程中，穿梭在各個類型的題目中，很容易讓人失去了方向。
+讓我們用演算法來解決人生的大小事吧！今天討論的三種方法：Divide and Conquer, Backtracking, DP，以解決人生難題為例，如何實際應用這三種方法，成功找到幸福的鑰匙。</p>
 
-&lt;!--more--&gt;
-&lt;h2 id=&quot;化整為零&quot;&gt;化整為零&lt;/h2&gt;
-&lt;p&gt;今天要討論的這三種方法，最大的共同點就是「把主問題分解成一個一個的小問題，化整為零後，各個擊破。」這背後的人生哲學其實也很值得我們借鏡，當我們面臨人生大大小小的難題時，很多人會沉陷在一開始面臨的大問題中，感覺到無力、沮喪、甚至自我厭惡，進而引發自卑情結，或是轉向無用的優越情結。但總是有另外一群人，異常的冷靜，雖然還是會有情緒，但總是很快的回過神來解決問題，慢慢的把大問題分解成一個一個可以處理的小問題，然後開始動手去做。&lt;/p&gt;
+<!--more-->
+<h2 id="化整為零">化整為零</h2>
+<p>今天要討論的這三種方法，最大的共同點就是「把主問題分解成一個一個的小問題，化整為零後，各個擊破。」這背後的人生哲學其實也很值得我們借鏡，當我們面臨人生大大小小的難題時，很多人會沉陷在一開始面臨的大問題中，感覺到無力、沮喪、甚至自我厭惡，進而引發自卑情結，或是轉向無用的優越情結。但總是有另外一群人，異常的冷靜，雖然還是會有情緒，但總是很快的回過神來解決問題，慢慢的把大問題分解成一個一個可以處理的小問題，然後開始動手去做。</p>
 
-&lt;blockquote&gt;
-  &lt;p&gt;演算法就是解決問題的方法。
-面對人生難題，也可以運用演算法！&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>演算法就是解決問題的方法。
+面對人生難題，也可以運用演算法！</p>
+</blockquote>
 
-&lt;h2 id=&quot;divide-and-conquer-各自為政&quot;&gt;Divide and Conquer 各自為政&lt;/h2&gt;
-&lt;p&gt;Divide and Conquer 最大的特色就是「每個子問題都是獨立的」。假設今天終於有機會可以跟心儀已久的妹子出去約會，該如何設計一個成功的約會呢？面對這個大問題，可以分解成「上午的行程」、「下午的行程」、「晚上的行程」子問題，如果過程順利，還要準備「過夜行程」。&lt;/p&gt;
+<h2 id="divide-and-conquer-各自為政">Divide and Conquer 各自為政</h2>
+<p>Divide and Conquer 最大的特色就是「每個子問題都是獨立的」。假設今天終於有機會可以跟心儀已久的妹子出去約會，該如何設計一個成功的約會呢？面對這個大問題，可以分解成「上午的行程」、「下午的行程」、「晚上的行程」子問題，如果過程順利，還要準備「過夜行程」。</p>
 
-&lt;p&gt;上午行程，適合靜態的活動，也可以讓彼此暖身並且熟悉對方的節奏，一間東西好吃、氣氛很好的早午餐是更好不過的選擇了，讓彼此可以坐著好好的面對面聊天，嘗試尋找切入點，為接下來的相處做好準備。&lt;/p&gt;
+<p>上午行程，適合靜態的活動，也可以讓彼此暖身並且熟悉對方的節奏，一間東西好吃、氣氛很好的早午餐是更好不過的選擇了，讓彼此可以坐著好好的面對面聊天，嘗試尋找切入點，為接下來的相處做好準備。</p>
 
-&lt;p&gt;下午行程，根據太陽角度大致分成三點前和三點後。三點前的太陽太烈，如果安排戶外活動，容易讓人覺得煩躁，更慘的是有可能讓女生因為滿頭大汗而狼狽不堪，因此三點前的行程適合室內看看展覽，或是有冷氣的地方。當然，如果要走展覽路線，一定要確保是自己熟悉的領域，也可以藉機讓對方更認識不一樣的自己。三點後的行程就很適合戶外活動，此時的太陽不那麼炙熱，好好的享受午後時光，會讓人有幸福的錯覺，馴服她的直覺，讓你和感到幸福產生連結，就成功一半了。騎個腳踏車，爬個小山，或是逛個老街，都是很不錯的選擇，如果能有個戶外活動必須兩個人一起完成那就更好了。最後選擇可以看美景或是夕陽的地方，感嘆一下及時行樂(yolo 你懂的～)。&lt;/p&gt;
+<p>下午行程，根據太陽角度大致分成三點前和三點後。三點前的太陽太烈，如果安排戶外活動，容易讓人覺得煩躁，更慘的是有可能讓女生因為滿頭大汗而狼狽不堪，因此三點前的行程適合室內看看展覽，或是有冷氣的地方。當然，如果要走展覽路線，一定要確保是自己熟悉的領域，也可以藉機讓對方更認識不一樣的自己。三點後的行程就很適合戶外活動，此時的太陽不那麼炙熱，好好的享受午後時光，會讓人有幸福的錯覺，馴服她的直覺，讓你和感到幸福產生連結，就成功一半了。騎個腳踏車，爬個小山，或是逛個老街，都是很不錯的選擇，如果能有個戶外活動必須兩個人一起完成那就更好了。最後選擇可以看美景或是夕陽的地方，感嘆一下及時行樂(yolo 你懂的～)。</p>
 
-&lt;p&gt;晚上行程，一頓浪漫的大餐是少不了的，東西可以吞嚥就好，重點氣氛要夠，最好是有駐唱的那種，讓她有種「人生至此，夫復何求」的感覺。吃過晚餐可以先在附近走走，散步聊天，至少要撐過晚上八點，然後開始提議有間可以看夜景喝咖啡的景觀餐廳還不錯，如果對方還願意給你機會表現，此時的達陣率至少有八成了。最後就前往你去到爛掉的老地方，大家好好坐下來聊聊，心中最軟的那一塊。&lt;/p&gt;
+<p>晚上行程，一頓浪漫的大餐是少不了的，東西可以吞嚥就好，重點氣氛要夠，最好是有駐唱的那種，讓她有種「人生至此，夫復何求」的感覺。吃過晚餐可以先在附近走走，散步聊天，至少要撐過晚上八點，然後開始提議有間可以看夜景喝咖啡的景觀餐廳還不錯，如果對方還願意給你機會表現，此時的達陣率至少有八成了。最後就前往你去到爛掉的老地方，大家好好坐下來聊聊，心中最軟的那一塊。</p>
 
-&lt;p&gt;過夜行程，Motel。&lt;/p&gt;
+<p>過夜行程，Motel。</p>
 
-&lt;h2 id=&quot;backtracking-斬立決&quot;&gt;Backtracking 斬立決&lt;/h2&gt;
-&lt;p&gt;在求偶的旅程中，一定要懂的演算法就是「Backtracking」了，應該要好好的推廣這個觀念，這樣就不會有恐怖情人出現了，面對不對的人，斬立決就對了。Backtracking 其實就是窮舉所有可能，在某個階段發現該 Solution 不是對的時候，立馬停止向下展開，這種技巧叫做「pruning」，以達到優化效率的目的。&lt;/p&gt;
+<h2 id="backtracking-斬立決">Backtracking 斬立決</h2>
+<p>在求偶的旅程中，一定要懂的演算法就是「Backtracking」了，應該要好好的推廣這個觀念，這樣就不會有恐怖情人出現了，面對不對的人，斬立決就對了。Backtracking 其實就是窮舉所有可能，在某個階段發現該 Solution 不是對的時候，立馬停止向下展開，這種技巧叫做「pruning」，以達到優化效率的目的。</p>
 
-&lt;h2 id=&quot;dynamic-programming-鑑往知來&quot;&gt;Dynamic Programming 鑑往知來&lt;/h2&gt;
-&lt;p&gt;DP 和 Divide and Conquer 最大的差別在於，DP 的子問題有可能會 overlapping，因此遇到以前遇過的就不需要全部重頭來過，可以鑑往知來。就像安排跟妹子約會的行程，你總是會有口袋名單，好的地方值得一去再去，因此安排行程就會越來越簡單，重點不是去了什麼地方，而是跟誰去，只要該約會地點值得信賴，就不需要再浪費心思去踩雷了，相對的你的表現也會越發自信，進而觸發對方的費洛蒙，成功達陣的機會就會大很多了，共勉之。&lt;/p&gt;
+<h2 id="dynamic-programming-鑑往知來">Dynamic Programming 鑑往知來</h2>
+<p>DP 和 Divide and Conquer 最大的差別在於，DP 的子問題有可能會 overlapping，因此遇到以前遇過的就不需要全部重頭來過，可以鑑往知來。就像安排跟妹子約會的行程，你總是會有口袋名單，好的地方值得一去再去，因此安排行程就會越來越簡單，重點不是去了什麼地方，而是跟誰去，只要該約會地點值得信賴，就不需要再浪費心思去踩雷了，相對的你的表現也會越發自信，進而觸發對方的費洛蒙，成功達陣的機會就會大很多了，共勉之。</p>
 
-&lt;h2 id=&quot;經典例子&quot;&gt;經典例子&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Divide and Conquer : merge sort。每個子問題都是各自獨立，不相重複，而且必須解完所有子問題，才能解決主問題。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Backtracking : 數獨。窮舉所有可能，一旦發現該格填入數字不合法後，就不需要再往下窮舉了。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Dynamic Programming : 費式數列。使用 recursion 時，會發現有很多子問題重複計算，這時候需要 DP Table 做紀錄，一旦遇到相同子問題時，只需要查表就可，不需要重複計算，這種技巧叫做「memoization」。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+<h2 id="經典例子">經典例子</h2>
+<ul>
+  <li>
+    <p>Divide and Conquer : merge sort。每個子問題都是各自獨立，不相重複，而且必須解完所有子問題，才能解決主問題。</p>
+  </li>
+  <li>
+    <p>Backtracking : 數獨。窮舉所有可能，一旦發現該格填入數字不合法後，就不需要再往下窮舉了。</p>
+  </li>
+  <li>
+    <p>Dynamic Programming : 費式數列。使用 recursion 時，會發現有很多子問題重複計算，這時候需要 DP Table 做紀錄，一旦遇到相同子問題時，只需要查表就可，不需要重複計算，這種技巧叫做「memoization」。</p>
+  </li>
+</ul>
 
-&lt;details&gt;
-    &lt;summary&gt;memoization？memorization？
-&lt;/summary&gt;
+<details>
+    <summary>memoization？memorization？
+</summary>
 「memoization」是計算機科學的特殊專有名詞，出自 Algorithm 經典書 「CLRS」p.347。
 「memorization」根據劍橋的翻譯：the act or process of learning something so that you will remember it exactly.
-&lt;/details&gt;
+</details>
 
-&lt;h2 id=&quot;conclusion-結論&quot;&gt;Conclusion 結論&lt;/h2&gt;
-&lt;p&gt;Divide and Conquer 會聯想到「independent subproblem」；Backtracking 的特徵是「pruning」；Dynamic Programming 的核心是「memoization」。
-還有很多細節都被省略了，但希望這篇文章能夠提供「overview」的角度來思考這三個演算法，祝大家刷題愉快！&lt;/p&gt;</content><author><name>srhuang</name></author><summary type="html">在刷 code 的漫長旅程中，穿梭在各個類型的題目中，很容易讓人失去了方向。 讓我們用演算法來解決人生的大小事吧！今天討論的三種方法：Divide and Conquer, Backtracking, DP，以解決人生難題為例，如何實際應用這三種方法，成功找到幸福的鑰匙。</summary></entry><entry><title type="html">The difference between a++ and ++a from assembly code</title><link href="http://localhost:4000/c/2019/10/06/c-001.html" rel="alternate" type="text/html" title="The difference between a++ and ++a from assembly code" /><published>2019-10-06T00:00:00+08:00</published><updated>2019-10-06T00:00:00+08:00</updated><id>http://localhost:4000/c/2019/10/06/c-001</id><content type="html" xml:base="http://localhost:4000/c/2019/10/06/c-001.html">&lt;p&gt;以下是科技公司面試常考的考題，主要是測驗你對於 a++ 和 ++a 的認知。&lt;/p&gt;
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9527&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a=%d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;請問上面這段程式碼會印出什麼？&lt;/p&gt;
+<h2 id="conclusion-結論">Conclusion 結論</h2>
+<p>Divide and Conquer 會聯想到「independent subproblem」；Backtracking 的特徵是「pruning」；Dynamic Programming 的核心是「memoization」。
+還有很多細節都被省略了，但希望這篇文章能夠提供「overview」的角度來思考這三個演算法，祝大家刷題愉快！</p>]]></content><author><name>srhuang</name></author><category term="Algorithm" /><summary type="html"><![CDATA[在刷 code 的漫長旅程中，穿梭在各個類型的題目中，很容易讓人失去了方向。 讓我們用演算法來解決人生的大小事吧！今天討論的三種方法：Divide and Conquer, Backtracking, DP，以解決人生難題為例，如何實際應用這三種方法，成功找到幸福的鑰匙。]]></summary></entry><entry><title type="html">The difference between a++ and ++a from assembly code</title><link href="http://localhost:4000/c/2019/10/06/c-001.html" rel="alternate" type="text/html" title="The difference between a++ and ++a from assembly code" /><published>2019-10-06T00:00:00+08:00</published><updated>2019-10-06T00:00:00+08:00</updated><id>http://localhost:4000/c/2019/10/06/c-001</id><content type="html" xml:base="http://localhost:4000/c/2019/10/06/c-001.html"><![CDATA[<p>以下是科技公司面試常考的考題，主要是測驗你對於 a++ 和 ++a 的認知。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</code></pre></div></div>
+<p>請問上面這段程式碼會印出什麼？</p>
 
-&lt;!--more--&gt;
+<!--more-->
 
-&lt;p&gt;我們首先想要了解 &lt;code class=&quot;highlighter-rouge&quot;&gt;a++&lt;/code&gt; 和 &lt;code class=&quot;highlighter-rouge&quot;&gt;++a&lt;/code&gt; 的差別，就要去看它們所產生出來的 assembly code。&lt;/p&gt;
+<p>我們首先想要了解 <code class="language-plaintext highlighter-rouge">a++</code> 和 <code class="language-plaintext highlighter-rouge">++a</code> 的差別，就要去看它們所產生出來的 assembly code。</p>
 
-&lt;p&gt;先介紹一個可以線上產生 assembly code 的網站，可以幫助我們快速深刻的了解 C。
-&lt;a href=&quot;https://gcc.godbolt.org/&quot;&gt;https://gcc.godbolt.org/&lt;/a&gt;&lt;/p&gt;
+<p>先介紹一個可以線上產生 assembly code 的網站，可以幫助我們快速深刻的了解 C。
+<a href="https://gcc.godbolt.org/">https://gcc.godbolt.org/</a></p>
 
-&lt;h2 id=&quot;a&quot;&gt;a++&lt;/h2&gt;
-&lt;p&gt;來考慮下面的程式碼：&lt;/p&gt;
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9527&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;丟到網站上就產生下面的 assembly code&lt;/p&gt;
+<h2 id="a">a++</h2>
+<p>來考慮下面的程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
 
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;test:
+<pre><code class="language-assembly">test:
         push    rbp
         mov     rbp, rsp
         mov     DWORD PTR [rbp-4], 9527
@@ -235,42 +691,42 @@ By Andrew Koenig and Barbara E. Moo, June 01, 2001&lt;/li&gt;
         nop
         pop     rbp
         ret
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;如果我們只關注在 &lt;code class=&quot;highlighter-rouge&quot;&gt;int b=a++&lt;/code&gt;：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;        mov     eax, DWORD PTR [rbp-4]
+</code></pre>
+<p>如果我們只關注在 <code class="language-plaintext highlighter-rouge">int b=a++</code>：</p>
+<pre><code class="language-assembly">        mov     eax, DWORD PTR [rbp-4]
         lea     edx, [rax+1]
         mov     DWORD PTR [rbp-4], edx
         mov     DWORD PTR [rbp-8], eax
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-  &lt;li&gt;第一行 &lt;code class=&quot;highlighter-rouge&quot;&gt;DWORD PTR [rbp-4]&lt;/code&gt; 代表變數 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 的位址，所以翻譯成中文就是把 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 的位址複製到暫存器 &lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt;。&lt;/li&gt;
-&lt;/ul&gt;
+</code></pre>
+<ul>
+  <li>第一行 <code class="language-plaintext highlighter-rouge">DWORD PTR [rbp-4]</code> 代表變數 <code class="language-plaintext highlighter-rouge">a</code> 的位址，所以翻譯成中文就是把 <code class="language-plaintext highlighter-rouge">a</code> 的位址複製到暫存器 <code class="language-plaintext highlighter-rouge">eax</code>。</li>
+</ul>
 
-&lt;p&gt;在講解第二行之前必須先瞭解 eax 和 rax 的關係：
-&lt;a href=&quot;https://stackoverflow.com/questions/25455447/x86-64-registers-rax-eax-ax-al-overwriting-full-register-contents&quot;&gt;rax, eax, ax, ah, al&lt;/a&gt;&lt;/p&gt;
+<p>在講解第二行之前必須先瞭解 eax 和 rax 的關係：
+<a href="https://stackoverflow.com/questions/25455447/x86-64-registers-rax-eax-ax-al-overwriting-full-register-contents">rax, eax, ax, ah, al</a></p>
 
-&lt;p&gt;以及中括號(brackets)在 assembly language 的意義：
-&lt;a href=&quot;https://stackoverflow.com/questions/48608423/what-do-square-brackets-mean-in-x86-assembly&quot;&gt;get the value of the address&lt;/a&gt;&lt;/p&gt;
+<p>以及中括號(brackets)在 assembly language 的意義：
+<a href="https://stackoverflow.com/questions/48608423/what-do-square-brackets-mean-in-x86-assembly">get the value of the address</a></p>
 
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;因此第二行的翻譯就是將 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 加一後的值存入暫存器 &lt;code class=&quot;highlighter-rouge&quot;&gt;edx&lt;/code&gt;，注意這邊並不更改 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 在 memory 的值。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;第三行的翻譯就是將儲存在 &lt;code class=&quot;highlighter-rouge&quot;&gt;edx&lt;/code&gt; 的值(a+1)存入 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; memory 的所在位址。&lt;/li&gt;
-  &lt;li&gt;第四行的翻譯就是將儲存在 &lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt; 的值(a)存入 &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; memory 的所在位址。&lt;/li&gt;
-&lt;/ul&gt;
+<ul>
+  <li>
+    <p>因此第二行的翻譯就是將 <code class="language-plaintext highlighter-rouge">a</code> 加一後的值存入暫存器 <code class="language-plaintext highlighter-rouge">edx</code>，注意這邊並不更改 <code class="language-plaintext highlighter-rouge">a</code> 在 memory 的值。</p>
+  </li>
+  <li>第三行的翻譯就是將儲存在 <code class="language-plaintext highlighter-rouge">edx</code> 的值(a+1)存入 <code class="language-plaintext highlighter-rouge">a</code> memory 的所在位址。</li>
+  <li>第四行的翻譯就是將儲存在 <code class="language-plaintext highlighter-rouge">eax</code> 的值(a)存入 <code class="language-plaintext highlighter-rouge">b</code> memory 的所在位址。</li>
+</ul>
 
-&lt;p&gt;因此最後 &lt;code class=&quot;highlighter-rouge&quot;&gt;b=9527&lt;/code&gt; 然後 &lt;code class=&quot;highlighter-rouge&quot;&gt;a=9528&lt;/code&gt;。&lt;/p&gt;
+<p>因此最後 <code class="language-plaintext highlighter-rouge">b=9527</code> 然後 <code class="language-plaintext highlighter-rouge">a=9528</code>。</p>
 
-&lt;h2 id=&quot;a-1&quot;&gt;++a&lt;/h2&gt;
-&lt;p&gt;接下來考慮下面的程式碼：&lt;/p&gt;
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9527&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;丟到網站上就產生下面的 assembly code&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;test:
+<h2 id="a-1">++a</h2>
+<p>接下來考慮下面的程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="o">++</span><span class="n">a</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
+<pre><code class="language-assembly">test:
         push    rbp
         mov     rbp, rsp
         mov     DWORD PTR [rbp-4], 9527
@@ -280,31 +736,31 @@ By Andrew Koenig and Barbara E. Moo, June 01, 2001&lt;/li&gt;
         nop
         pop     rbp
         ret
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;如果我們只關注在 &lt;code class=&quot;highlighter-rouge&quot;&gt;int b=++a&lt;/code&gt;：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;        add     DWORD PTR [rbp-4], 1
+</code></pre>
+<p>如果我們只關注在 <code class="language-plaintext highlighter-rouge">int b=++a</code>：</p>
+<pre><code class="language-assembly">        add     DWORD PTR [rbp-4], 1
         mov     eax, DWORD PTR [rbp-4]
         mov     DWORD PTR [rbp-8], eax
-&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-  &lt;li&gt;第一行直接使用 &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; 指令將 1 加到 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; memory 所在位址。&lt;/li&gt;
-  &lt;li&gt;第二行將 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; memory 的值(a+1)存入 &lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt;。&lt;/li&gt;
-  &lt;li&gt;第三行將儲存在 &lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt; 的值(a+1)存入 &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; memory 的所在位址。&lt;/li&gt;
-&lt;/ul&gt;
+</code></pre>
+<ul>
+  <li>第一行直接使用 <code class="language-plaintext highlighter-rouge">add</code> 指令將 1 加到 <code class="language-plaintext highlighter-rouge">a</code> memory 所在位址。</li>
+  <li>第二行將 <code class="language-plaintext highlighter-rouge">a</code> memory 的值(a+1)存入 <code class="language-plaintext highlighter-rouge">eax</code>。</li>
+  <li>第三行將儲存在 <code class="language-plaintext highlighter-rouge">eax</code> 的值(a+1)存入 <code class="language-plaintext highlighter-rouge">b</code> memory 的所在位址。</li>
+</ul>
 
-&lt;p&gt;有觀察到差異了嗎？&lt;/p&gt;
+<p>有觀察到差異了嗎？</p>
 
-&lt;p&gt;C 對於 statement 的運算必須經由暫存器，因此關鍵在於暫存器所存的值是 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 還是 &lt;code class=&quot;highlighter-rouge&quot;&gt;a+1&lt;/code&gt;，不論是&lt;code class=&quot;highlighter-rouge&quot;&gt;a++&lt;/code&gt; 或是 &lt;code class=&quot;highlighter-rouge&quot;&gt;++a&lt;/code&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 在 memory 的值都會先加一。&lt;/p&gt;
+<p>C 對於 statement 的運算必須經由暫存器，因此關鍵在於暫存器所存的值是 <code class="language-plaintext highlighter-rouge">a</code> 還是 <code class="language-plaintext highlighter-rouge">a+1</code>，不論是<code class="language-plaintext highlighter-rouge">a++</code> 或是 <code class="language-plaintext highlighter-rouge">++a</code>，<code class="language-plaintext highlighter-rouge">a</code> 在 memory 的值都會先加一。</p>
 
-&lt;h2 id=&quot;aa&quot;&gt;a=a++&lt;/h2&gt;
-&lt;p&gt;考慮以下程式碼：&lt;/p&gt;
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9527&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;丟到網站上就產生下面的 assembly code&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;test:
+<h2 id="aa">a=a++</h2>
+<p>考慮以下程式碼：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">test</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>丟到網站上就產生下面的 assembly code</p>
+<pre><code class="language-assembly">test:
         push    rbp
         mov     rbp, rsp
         mov     DWORD PTR [rbp-4], 9527
@@ -315,420 +771,430 @@ By Andrew Koenig and Barbara E. Moo, June 01, 2001&lt;/li&gt;
         nop
         pop     rbp
         ret
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;如果我們只關注在 &lt;code class=&quot;highlighter-rouge&quot;&gt;a=a++&lt;/code&gt;：&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-assembly&quot;&gt;        mov     eax, DWORD PTR [rbp-4]
+</code></pre>
+<p>如果我們只關注在 <code class="language-plaintext highlighter-rouge">a=a++</code>：</p>
+<pre><code class="language-assembly">        mov     eax, DWORD PTR [rbp-4]
         lea     edx, [rax+1]
         mov     DWORD PTR [rbp-4], edx
         mov     DWORD PTR [rbp-4], eax
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;根據上面的討論，這四行 assembly code 所代表的意義就是：將 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 的值複製到 &lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt;，然後利用暫存器 &lt;code class=&quot;highlighter-rouge&quot;&gt;edx&lt;/code&gt;將 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; memory 所在的位址的值加一，最後將&lt;code class=&quot;highlighter-rouge&quot;&gt;eax&lt;/code&gt;(a) 存回 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; memory 所在的位址，因此&lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;並不會更改它的值。&lt;/p&gt;
+</code></pre>
+<p>根據上面的討論，這四行 assembly code 所代表的意義就是：將 <code class="language-plaintext highlighter-rouge">a</code> 的值複製到 <code class="language-plaintext highlighter-rouge">eax</code>，然後利用暫存器 <code class="language-plaintext highlighter-rouge">edx</code>將 <code class="language-plaintext highlighter-rouge">a</code> memory 所在的位址的值加一，最後將<code class="language-plaintext highlighter-rouge">eax</code>(a) 存回 <code class="language-plaintext highlighter-rouge">a</code> memory 所在的位址，因此<code class="language-plaintext highlighter-rouge">a</code>並不會更改它的值。</p>
 
-&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9527&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a=%d&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;會印出&lt;code class=&quot;highlighter-rouge&quot;&gt;a=9527&lt;/code&gt;。&lt;/p&gt;</content><author><name>srhuang</name></author><summary type="html">以下是科技公司面試常考的考題，主要是測驗你對於 a++ 和 ++a 的認知。 int a=9527; a=a++; printf(&quot;a=%d\n&quot;, a); 請問上面這段程式碼會印出什麼？</summary></entry><entry><title type="html">C++ Vector clear() and resize(0)</title><link href="http://localhost:4000/c++/2019/10/05/cplusplus-001.html" rel="alternate" type="text/html" title="C++ Vector clear() and resize(0)" /><published>2019-10-05T00:00:00+08:00</published><updated>2019-10-05T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/10/05/cplusplus-001</id><content type="html" xml:base="http://localhost:4000/c++/2019/10/05/cplusplus-001.html">&lt;p&gt;從 C++ STL source code 來了解 vector.clear() and vector.resize(0) 的差異。&lt;/p&gt;
+<h2 id="conclusion">Conclusion</h2>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kt">int</span> <span class="n">a</span><span class="o">=</span><span class="mi">9527</span><span class="p">;</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="o">++</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"a=%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+</code></pre></div></div>
+<p>會印出<code class="language-plaintext highlighter-rouge">a=9527</code>。</p>
 
-&lt;!--more--&gt;
+<h2 id="mistakes">Mistakes</h2>
+<p>這題其實是有爭議的，因為不論是<code class="language-plaintext highlighter-rouge">a++</code>還是<code class="language-plaintext highlighter-rouge">++a</code>，之前的討論都建立在「<code class="language-plaintext highlighter-rouge">a</code>在 memory 中的值都會先加一」，差別在於暫存器的值是 <code class="language-plaintext highlighter-rouge">a+1</code> 或是 <code class="language-plaintext highlighter-rouge">a</code>。但其實<code class="language-plaintext highlighter-rouge">a</code>在memory中的值什麼時候更新(+1)，是取決於 compiler 的實作，因此<code class="language-plaintext highlighter-rouge">a=a++</code>其實是「undefined behavior」。</p>
 
-&lt;h2 id=&quot;resource&quot;&gt;Resource&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.cplusplus.com/reference/vector/vector/resize/&quot;&gt;resize&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.cplusplus.com/reference/vector/vector/clear/&quot;&gt;clear&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/llvm/llvm-project/blob/master/libcxx/include/vector&quot;&gt;C++ Vector STL source code&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="reference">Reference</h3>
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Undefined_behavior">Wiki - Undefined behavior</a></li>
+  <li>C99 規格書 6.5 Expression</li>
+  <li><a href="http://hackfoldr.org/dykc/https%253A%252F%252Fhackmd.io%252Fs%252FSkr9vGiQm">Jserv - 你所不知道的C語言: 未定義行為篇</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="C" /><summary type="html"><![CDATA[以下是科技公司面試常考的考題，主要是測驗你對於 a++ 和 ++a 的認知。 int a=9527; a=a++; printf("a=%d\n", a); 請問上面這段程式碼會印出什麼？]]></summary></entry><entry><title type="html">C++ Vector clear() and resize(0)</title><link href="http://localhost:4000/c++/2019/10/05/cplusplus-001.html" rel="alternate" type="text/html" title="C++ Vector clear() and resize(0)" /><published>2019-10-05T00:00:00+08:00</published><updated>2019-10-05T00:00:00+08:00</updated><id>http://localhost:4000/c++/2019/10/05/cplusplus-001</id><content type="html" xml:base="http://localhost:4000/c++/2019/10/05/cplusplus-001.html"><![CDATA[<p>從 C++ STL source code 來了解 vector.clear() and vector.resize(0) 的差異。</p>
 
-&lt;h2 id=&quot;stl-source-code-分析&quot;&gt;STL source code 分析&lt;/h2&gt;
+<!--more-->
 
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;vector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_Tp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_Allocator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;resize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size_type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__sz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;size_type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__cs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__cs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__sz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__sz&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__cs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__cs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__sz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__destruct_at_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__begin_&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__sz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;resize(0) 代表 &lt;code class=&quot;highlighter-rouge&quot;&gt;__sz=0&lt;/code&gt;，就會執行&lt;code class=&quot;highlighter-rouge&quot;&gt;__destruct_at_end(this-&amp;gt;__begin_)&lt;/code&gt;。&lt;/p&gt;
+<h2 id="resource">Resource</h2>
+<ul>
+  <li><a href="http://www.cplusplus.com/reference/vector/vector/resize/">resize</a></li>
+  <li><a href="http://www.cplusplus.com/reference/vector/vector/clear/">clear</a></li>
+  <li><a href="https://github.com/llvm/llvm-project/blob/master/libcxx/include/vector">C++ Vector STL source code</a></li>
+</ul>
 
-&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_NOEXCEPT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__destruct_at_end&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__begin_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;所以其實 &lt;code class=&quot;highlighter-rouge&quot;&gt;resize(0)&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;clear&lt;/code&gt; 是一樣的。&lt;/p&gt;</content><author><name>srhuang</name></author><summary type="html">從 C++ STL source code 來了解 vector.clear() and vector.resize(0) 的差異。</summary></entry><entry><title type="html">快速了解 Formal Language (形式語言)</title><link href="http://localhost:4000/formal%20language/2019/09/15/formallanguage-001.html" rel="alternate" type="text/html" title="快速了解 Formal Language (形式語言)" /><published>2019-09-15T00:00:00+08:00</published><updated>2019-09-15T00:00:00+08:00</updated><id>http://localhost:4000/formal%20language/2019/09/15/formallanguage-001</id><content type="html" xml:base="http://localhost:4000/formal%20language/2019/09/15/formallanguage-001.html">&lt;p&gt;這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
-Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 &lt;a href=&quot;https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F&quot;&gt;ENIAC&lt;/a&gt; 則是 1946 的事情了。&lt;/p&gt;
+<h2 id="stl-source-code-分析">STL source code 分析</h2>
 
-&lt;!--more--&gt;
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Allocator</span><span class="o">&gt;::</span><span class="n">resize</span><span class="p">(</span><span class="n">size_type</span> <span class="n">__sz</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">size_type</span> <span class="n">__cs</span> <span class="o">=</span> <span class="n">size</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span> <span class="o">&lt;</span> <span class="n">__sz</span><span class="p">)</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">__append</span><span class="p">(</span><span class="n">__sz</span> <span class="o">-</span> <span class="n">__cs</span><span class="p">);</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">__cs</span> <span class="o">&gt;</span> <span class="n">__sz</span><span class="p">)</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">__destruct_at_end</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">__begin_</span> <span class="o">+</span> <span class="n">__sz</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>resize(0) 代表 <code class="language-plaintext highlighter-rouge">__sz=0</code>，就會執行<code class="language-plaintext highlighter-rouge">__destruct_at_end(this-&gt;__begin_)</code>。</p>
 
-&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;#Definition&quot;&gt;Definition : Languages, Grammars, Automata&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#Regular&quot;&gt;Regular Languages and DFA&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#CFL&quot;&gt;Context-Free Languages and Pushdown Automata&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#REL&quot;&gt;Recursively enumerable Languages and Turing Machine&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#CSL&quot;&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#Chomsky&quot;&gt;The Chomsky Hierarchy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#limits&quot;&gt;Limits of Algorithmic Computation&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#complexity&quot;&gt;Computational Complexity&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">clear</span><span class="p">()</span> <span class="n">_NOEXCEPT</span> <span class="p">{</span><span class="n">__destruct_at_end</span><span class="p">(</span><span class="n">__begin_</span><span class="p">);}</span>
+</code></pre></div></div>
+<p>所以其實 <code class="language-plaintext highlighter-rouge">resize(0)</code> and <code class="language-plaintext highlighter-rouge">clear</code> 是一樣的。</p>]]></content><author><name>srhuang</name></author><category term="C++" /><summary type="html"><![CDATA[從 C++ STL source code 來了解 vector.clear() and vector.resize(0) 的差異。]]></summary></entry><entry><title type="html">快速了解 Formal Language (形式語言)</title><link href="http://localhost:4000/formal%20language/2019/09/15/formallanguage-001.html" rel="alternate" type="text/html" title="快速了解 Formal Language (形式語言)" /><published>2019-09-15T00:00:00+08:00</published><updated>2019-09-15T00:00:00+08:00</updated><id>http://localhost:4000/formal%20language/2019/09/15/formallanguage-001</id><content type="html" xml:base="http://localhost:4000/formal%20language/2019/09/15/formallanguage-001.html"><![CDATA[<p>這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。
+Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 <a href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%95%B8%E5%80%BC%E7%A9%8D%E5%88%86%E8%A8%88%E7%AE%97%E6%A9%9F">ENIAC</a> 則是 1946 的事情了。</p>
 
-&lt;h2 id=&quot;why-we-study-formal-language-theory&quot;&gt;Why we study formal language theory?&lt;/h2&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;theory provides concepts and principles that help us understand the general nature of the discipline.&lt;/p&gt;
-&lt;/blockquote&gt;
+<!--more-->
 
-&lt;p&gt;學習理論讓我們知道計算機科學的最核心的概念和原則，進而了解電腦的極限，而不用透過無意義的 trial-and-error 以及猜測來理解電腦，以更高的角度來看待計算機科學。&lt;/p&gt;
+<h2 id="overview">Overview</h2>
+<ul>
+  <li><a href="#Definition">Definition : Languages, Grammars, Automata</a></li>
+  <li><a href="#Regular">Regular Languages and DFA</a></li>
+  <li><a href="#CFL">Context-Free Languages and Pushdown Automata</a></li>
+  <li><a href="#REL">Recursively enumerable Languages and Turing Machine</a></li>
+  <li><a href="#CSL">Context-Sensitive Languages and Linear Bounded Automata</a></li>
+  <li><a href="#Chomsky">The Chomsky Hierarchy</a></li>
+  <li><a href="#limits">Limits of Algorithmic Computation</a></li>
+  <li><a href="#complexity">Computational Complexity</a></li>
+</ul>
 
-&lt;blockquote&gt;
-  &lt;p&gt;the ideas we will discuss have some immediate and important applications.e.g. digital design, programming languages, and compilers.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h2 id="why-we-study-formal-language-theory">Why we study formal language theory?</h2>
+<blockquote>
+  <p>theory provides concepts and principles that help us understand the general nature of the discipline.</p>
+</blockquote>
 
-&lt;p&gt;就實作面來說，formal language 是 compiler 的理論基礎，因為 compiler 就是在處理語言和字串，本質上和 formal language 所探討的問題是一致的；programming languages 核心的概念也是把人類理解的語言，轉成機器可以執行的語言，不論高階語言還是低階語言，本質上都是處理語言和字串的轉換。&lt;/p&gt;
+<p>學習理論讓我們知道計算機科學的最核心的概念和原則，進而了解電腦的極限，而不用透過無意義的 trial-and-error 以及猜測來理解電腦，以更高的角度來看待計算機科學。</p>
 
-&lt;blockquote&gt;
-  &lt;p&gt;the subject matter is intellectually stimulating and fun.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>the ideas we will discuss have some immediate and important applications.e.g. digital design, programming languages, and compilers.</p>
+</blockquote>
 
-&lt;p&gt;最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。&lt;/p&gt;
+<p>就實作面來說，formal language 是 compiler 的理論基礎，因為 compiler 就是在處理語言和字串，本質上和 formal language 所探討的問題是一致的；programming languages 核心的概念也是把人類理解的語言，轉成機器可以執行的語言，不論高階語言還是低階語言，本質上都是處理語言和字串的轉換。</p>
 
-&lt;p&gt;Using Formal Language :&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;definition of programming languages.&lt;/li&gt;
-  &lt;li&gt;interpreters.&lt;/li&gt;
-  &lt;li&gt;compilers.&lt;/li&gt;
-&lt;/ul&gt;
+<blockquote>
+  <p>the subject matter is intellectually stimulating and fun.</p>
+</blockquote>
 
-&lt;details&gt;
-    &lt;summary&gt;關於 formal language 的翻譯
-&lt;/summary&gt;
+<p>最後一個理由是，透過理解這些理論基礎和證明，會再次感受到前人研究的偉大，而我們也只是站在這些巨人的肩膀上，希望獲得新知識的過程能帶來無比的成就感以及樂趣。</p>
+
+<p>Using Formal Language :</p>
+<ul>
+  <li>definition of programming languages.</li>
+  <li>interpreters.</li>
+  <li>compilers.</li>
+</ul>
+
+<details>
+    <summary>關於 formal language 的翻譯
+</summary>
 如果把 formal language 翻譯成「正規語言」，那 regular language 可能會不知道該如何翻譯，因此比較好的翻譯應該是「形式語言」，而「正規語言」是包含於「形式語言」。
-&lt;/details&gt;
+</details>
 
-&lt;h2 id=&quot;definition--languages-grammars-automata&quot;&gt;&lt;a id=&quot;Definition&quot;&gt;&lt;/a&gt;Definition : Languages, Grammars, Automata&lt;/h2&gt;
-&lt;p&gt;在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。&lt;/p&gt;
+<h2 id="definition--languages-grammars-automata"><a id="Definition"></a>Definition : Languages, Grammars, Automata</h2>
+<p>在開始討論 formal language 之前，我們必須對於要討論的對象做根本上的定義。</p>
 
-&lt;p&gt;&lt;em&gt;Languages&lt;/em&gt; 是一個數學上的字串集合；
-這些字串集合的 derivation rules 就稱為 &lt;em&gt;Grammars&lt;/em&gt;；
-而設計一個自動機來決定給定的字串是否屬於該集合則稱為 &lt;em&gt;Accepter&lt;/em&gt; (Automata 的一種)。&lt;/p&gt;
+<p><em>Languages</em> 是一個數學上的字串集合；
+這些字串集合的 derivation rules 就稱為 <em>Grammars</em>；
+而設計一個自動機來決定給定的字串是否屬於該集合則稱為 <em>Accepter</em> (Automata 的一種)。</p>
 
-&lt;p&gt;&lt;strong&gt;Languages&lt;/strong&gt; 的例子：
-&lt;script type=&quot;math/tex&quot;&gt;L_1=\{ a^nb^n : n \geq 0 \}&lt;/script&gt;&lt;/p&gt;
+<p><strong>Languages</strong> 的例子：
+\(L_1=\{ a^nb^n : n \geq 0 \}\)</p>
 
-&lt;p&gt;&lt;strong&gt;Automata&lt;/strong&gt; 基本上分為兩種：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Accepter : output response is limited to a simple “yes” or “no”.&lt;/li&gt;
-  &lt;li&gt;Transducer : producing strings of symbols as output.&lt;/li&gt;
-&lt;/ul&gt;
+<p><strong>Automata</strong> 基本上分為兩種：</p>
+<ul>
+  <li>Accepter : output response is limited to a simple “yes” or “no”.</li>
+  <li>Transducer : producing strings of symbols as output.</li>
+</ul>
 
-&lt;p&gt;&lt;strong&gt;Grammars&lt;/strong&gt; 是用數學嚴謹的定義來描述 language：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;variables (V) : finite set.&lt;/li&gt;
-  &lt;li&gt;terminal symbols (T) : finite set.&lt;/li&gt;
-  &lt;li&gt;start variable (S) : special symbol.&lt;/li&gt;
-  &lt;li&gt;productions (P) : which used to derives the strings.&lt;/li&gt;
-&lt;/ul&gt;
+<p><strong>Grammars</strong> 是用數學嚴謹的定義來描述 language：</p>
+<ul>
+  <li>variables (V) : finite set.</li>
+  <li>terminal symbols (T) : finite set.</li>
+  <li>start variable (S) : special symbol.</li>
+  <li>productions (P) : which used to derives the strings.</li>
+</ul>
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;G_1 = (\{A,S\},\{a,b\},S,P_1)\ with\ P_1\ consisting\ of\ the\ productions \\
+\[G_1 = (\{A,S\},\{a,b\},S,P_1)\ with\ P_1\ consisting\ of\ the\ productions \\
 S \to aAb|\lambda \\
-A \to aAb|\lambda&lt;/script&gt;
+A \to aAb|\lambda\]
 
-&lt;p&gt;這個 Grammar 其實就是 Language $L_1$ 那個例子的 Grammar，所以 &lt;script type=&quot;math/tex&quot;&gt;L(G_1) = L_1&lt;/script&gt;。&lt;/p&gt;
+<p>這個 Grammar 其實就是 Language $L_1$ 那個例子的 Grammar，所以 \(L(G_1) = L_1\)。</p>
 
-&lt;h2 id=&quot;regular-languages-and-dfa&quot;&gt;&lt;a id=&quot;Regular&quot;&gt;&lt;/a&gt;Regular Languages and DFA&lt;/h2&gt;
-&lt;p&gt;我們將會從最簡單的 automata 開始討論，由於接下來的 automata 都是 accepters，所以可以暫時理解 $automata=accepters$。&lt;/p&gt;
+<h2 id="regular-languages-and-dfa"><a id="Regular"></a>Regular Languages and DFA</h2>
+<p>我們將會從最簡單的 automata 開始討論，由於接下來的 automata 都是 accepters，所以可以暫時理解 $automata=accepters$。</p>
 
-&lt;p&gt;Language 是一種字串的集合，關於這個集合我們會用各種角度和方式來描述它，讓它變得更加具體，其中一個就是設計一個 automata 讓所有該集合的字串都能通過該 automata(accepter)；Grammars 則是透過數學的方式來描述該 language。&lt;/p&gt;
+<p>Language 是一種字串的集合，關於這個集合我們會用各種角度和方式來描述它，讓它變得更加具體，其中一個就是設計一個 automata 讓所有該集合的字串都能通過該 automata(accepter)；Grammars 則是透過數學的方式來描述該 language。</p>
 
-&lt;h3 id=&quot;finite-automata-finite-state-machine-fsm&quot;&gt;Finite Automata (Finite State Machine, FSM)&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Deterministic Finite Automata (DFA) is defined by internal states, input alphabet, transition function, initial state, final states.
-    &lt;ul&gt;
-      &lt;li&gt;each move consumes one input symbol.&lt;/li&gt;
-      &lt;li&gt;the string is accepted if the automaton is in one of its final states.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Nondeterministic Finite Automata (NFA)
-    &lt;ul&gt;
-      &lt;li&gt;transition function range is a set of possible states.&lt;/li&gt;
-      &lt;li&gt;can make a transition without consuming an input symbol.&lt;/li&gt;
-      &lt;li&gt;there is no transition defined for the specific situation.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="finite-automata-finite-state-machine-fsm">Finite Automata (Finite State Machine, FSM)</h3>
+<ul>
+  <li>Deterministic Finite Automata (DFA) is defined by internal states, input alphabet, transition function, initial state, final states.
+    <ul>
+      <li>each move consumes one input symbol.</li>
+      <li>the string is accepted if the automaton is in one of its final states.</li>
+    </ul>
+  </li>
+  <li>Nondeterministic Finite Automata (NFA)
+    <ul>
+      <li>transition function range is a set of possible states.</li>
+      <li>can make a transition without consuming an input symbol.</li>
+      <li>there is no transition defined for the specific situation.</li>
+    </ul>
+  </li>
+</ul>
 
-&lt;blockquote&gt;
-  &lt;p&gt;The classes of DFA and NFA are equally powerfully.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>The classes of DFA and NFA are equally powerfully.</p>
+</blockquote>
 
-&lt;h3 id=&quot;regular-language&quot;&gt;Regular Language&lt;/h3&gt;
-&lt;p&gt;A language $L$ is called regular if and only if there exists some DFA $M$ such that, $L=L(M)$.&lt;/p&gt;
+<h3 id="regular-language">Regular Language</h3>
+<p>A language $L$ is called regular if and only if there exists some DFA $M$ such that, $L=L(M)$.</p>
 
-&lt;h3 id=&quot;regular-grammar&quot;&gt;Regular Grammar&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A language $L$ is regular if and only if there exists a regular grammar $G$ such that $L=L(G)$.&lt;/li&gt;
-  &lt;li&gt;A regular grammar is one that is either right-linear or left-linear, which there is exactly one variable occuring as the rightmost/leftmost symbol.&lt;br /&gt;
-Right-Linear Grammars ：$A \to xB$&lt;br /&gt;
-Left-Linear Grammars : $A \to Bx$&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="regular-grammar">Regular Grammar</h3>
+<ul>
+  <li>A language $L$ is regular if and only if there exists a regular grammar $G$ such that $L=L(G)$.</li>
+  <li>A regular grammar is one that is either right-linear or left-linear, which there is exactly one variable occuring as the rightmost/leftmost symbol.<br />
+Right-Linear Grammars ：$A \to xB$<br />
+Left-Linear Grammars : $A \to Bx$</li>
+</ul>
 
-&lt;h3 id=&quot;regular-expression&quot;&gt;Regular Expression&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;One way of describing regular language is via the notation of regular expression.&lt;/li&gt;
-  &lt;li&gt;Two regular expressions are equivalent if they denote the same language.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="regular-expression">Regular Expression</h3>
+<ul>
+  <li>One way of describing regular language is via the notation of regular expression.</li>
+  <li>Two regular expressions are equivalent if they denote the same language.</li>
+</ul>
 
-&lt;blockquote&gt;
-  &lt;p&gt;There are three ways to describe regular languages：DFA, regular expression, regular grammars.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>There are three ways to describe regular languages：DFA, regular expression, regular grammars.</p>
+</blockquote>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;Closure Properties of Regular Languages&lt;/li&gt;
-  &lt;li&gt;membership algorithm&lt;/li&gt;
-  &lt;li&gt;Identifying Nonregular Languages
-    &lt;ul&gt;
-        &lt;li&gt;Pigeonhole Principle (鴿籠原理)&lt;/li&gt;
-        &lt;li&gt;Pumping Lemma&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Closure Properties of Regular Languages</li>
+  <li>membership algorithm</li>
+  <li>Identifying Nonregular Languages
+    <ul>
+        <li>Pigeonhole Principle (鴿籠原理)</li>
+        <li>Pumping Lemma</li>
+    </ul>
+  </li>
+</ul>
+</details>
 
-&lt;h2 id=&quot;context-free-languages-and-pushdown-automata&quot;&gt;&lt;a id=&quot;CFL&quot;&gt;&lt;/a&gt;Context-Free Languages and Pushdown Automata&lt;/h2&gt;
-&lt;p&gt;雖然 regular language 廣泛應用在 computer science 領域中，但是還是有很多是 regular language 無法處理的，例如我們舉的第一個例子：&lt;/p&gt;
+<h2 id="context-free-languages-and-pushdown-automata"><a id="CFL"></a>Context-Free Languages and Pushdown Automata</h2>
+<p>雖然 regular language 廣泛應用在 computer science 領域中，但是還是有很多是 regular language 無法處理的，例如我們舉的第一個例子：</p>
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_1=\{ a^nb^n : n \geq 0 \}&lt;/script&gt;
+\[L_1=\{ a^nb^n : n \geq 0 \}\]
 
-&lt;p&gt;假如 $a=“(”, b=”)”$，那麼這個 language 所產生的 automata 將會是判斷 programming language 的括號是否合法的方法之一。可以想像的是，利用 finite state 將無法紀錄已經 parsing 幾個 a 了，因此我們需要更強大的 language 來處理 regular language 無法處理的 language。
-最核心的概念就是在 finite state 以外新增 storage (stack)。你將會發現「新增/修改 storage」是區別每個 language 所對應的 automata 重要的 property 之一。&lt;/p&gt;
+<p>假如 $a=“(”, b=”)”$，那麼這個 language 所產生的 automata 將會是判斷 programming language 的括號是否合法的方法之一。可以想像的是，利用 finite state 將無法紀錄已經 parsing 幾個 a 了，因此我們需要更強大的 language 來處理 regular language 無法處理的 language。
+最核心的概念就是在 finite state 以外新增 storage (stack)。你將會發現「新增/修改 storage」是區別每個 language 所對應的 automata 重要的 property 之一。</p>
 
-&lt;h3 id=&quot;context-free-grammars&quot;&gt;Context-Free Grammars&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;all productions in P have the form $A \to x$.&lt;/li&gt;
-  &lt;li&gt;retaining the restriction on the left side, but permitting anything on the right.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="context-free-grammars">Context-Free Grammars</h3>
+<ul>
+  <li>all productions in P have the form $A \to x$.</li>
+  <li>retaining the restriction on the left side, but permitting anything on the right.</li>
+</ul>
 
-&lt;h3 id=&quot;context-free-languages&quot;&gt;Context-Free Languages&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A language $L$ is said to be context-free if and only if there is a context-free grammar $G$ such that $L=L(G)$.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="context-free-languages">Context-Free Languages</h3>
+<ul>
+  <li>A language $L$ is said to be context-free if and only if there is a context-free grammar $G$ such that $L=L(G)$.</li>
+</ul>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;Derivation Tree (Parse tree)&lt;/li&gt;
-  &lt;li&gt;Sentential form of the derivation&lt;/li&gt;
-  &lt;li&gt;Parsing and Ambiguity
-    &lt;ul&gt;
-        &lt;li&gt;exhaustive search parsing (brute force parsing)&lt;/li&gt;
-        &lt;li&gt;Simple Grammar (s-grammar)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Simplification of Context-Free Grammars and Normal Forms
-    &lt;ul&gt;
-        &lt;li&gt;Chomsky Normal Form : A-&amp;gt;BC or A-&amp;gt;a&lt;/li&gt;
-        &lt;li&gt;Greibach Normal Form : A-&amp;gt;ax&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Derivation Tree (Parse tree)</li>
+  <li>Sentential form of the derivation</li>
+  <li>Parsing and Ambiguity
+    <ul>
+        <li>exhaustive search parsing (brute force parsing)</li>
+        <li>Simple Grammar (s-grammar)</li>
+    </ul>
+  </li>
+  <li>Simplification of Context-Free Grammars and Normal Forms
+    <ul>
+        <li>Chomsky Normal Form : A-&gt;BC or A-&gt;a</li>
+        <li>Greibach Normal Form : A-&gt;ax</li>
+    </ul>
+  </li>
+</ul>
+</details>
 
-&lt;h3 id=&quot;pushdown-automata&quot;&gt;Pushdown Automata&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Nondeterministic Pushdown Automata (NPDA)
-    &lt;ul&gt;
-      &lt;li&gt;For any context-free language $L$, there exists an NPDA $M$ such that $L=L(M)$.&lt;/li&gt;
-      &lt;li&gt;If $L=L(M)$ for some NPDA $M$, then $L$ is a context-free language.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Deterministic Pushdown Automata (DPDA)
-    &lt;ul&gt;
-      &lt;li&gt;A language $L$ is said to be a deterministic context-free language if and only if there exists a DPDA $M$ such that $L=L(M)$.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="pushdown-automata">Pushdown Automata</h3>
+<ul>
+  <li>Nondeterministic Pushdown Automata (NPDA)
+    <ul>
+      <li>For any context-free language $L$, there exists an NPDA $M$ such that $L=L(M)$.</li>
+      <li>If $L=L(M)$ for some NPDA $M$, then $L$ is a context-free language.</li>
+    </ul>
+  </li>
+  <li>Deterministic Pushdown Automata (DPDA)
+    <ul>
+      <li>A language $L$ is said to be a deterministic context-free language if and only if there exists a DPDA $M$ such that $L=L(M)$.</li>
+    </ul>
+  </li>
+</ul>
 
-&lt;blockquote&gt;
-  &lt;p&gt;deterministic and nondeterministic pushdown automata are not equivalent.&lt;/p&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <p>deterministic and nondeterministic pushdown automata are not equivalent.</p>
+</blockquote>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;Properties of Context-Free Languages
-    &lt;ul&gt;
-        &lt;li&gt;A pumping lemma for context-free languages&lt;/li&gt;
-        &lt;li&gt;Closure Properties for Context-Free Languages&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Properties of Context-Free Languages
+    <ul>
+        <li>A pumping lemma for context-free languages</li>
+        <li>Closure Properties for Context-Free Languages</li>
+    </ul>
+  </li>
+</ul>
+</details>
 
-&lt;h2 id=&quot;recursively-enumerable-languages-and-turing-machine&quot;&gt;&lt;a id=&quot;REL&quot;&gt;&lt;/a&gt;Recursively enumerable Languages and Turing Machine&lt;/h2&gt;
-&lt;p&gt;我們發現還是有 Language 不屬於 regular and context-free language&lt;/p&gt;
+<h2 id="recursively-enumerable-languages-and-turing-machine"><a id="REL"></a>Recursively enumerable Languages and Turing Machine</h2>
+<p>我們發現還是有 Language 不屬於 regular and context-free language</p>
 
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;L_1=\{ a^nb^nc^n : n \geq 0 \}&lt;/script&gt;
+\[L_1=\{ a^nb^nc^n : n \geq 0 \}\]
 
-&lt;p&gt;因此透過修改 storage 可以得到更 powerful 的 language : Turing Machine (Using Tapes).&lt;/p&gt;
+<p>因此透過修改 storage 可以得到更 powerful 的 language : Turing Machine (Using Tapes).</p>
 
-&lt;h3 id=&quot;turing-machine&quot;&gt;Turing Machine&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Definition : associated with the tape is a read-write head that can travel right or left.&lt;/li&gt;
-  &lt;li&gt;The Turing machine enters a final state and halts, then the string is considered to be accepted.&lt;/li&gt;
-  &lt;li&gt;main features :
-    &lt;ul&gt;
-      &lt;li&gt;tape is unbounded in both directions.&lt;/li&gt;
-      &lt;li&gt;deterministic.&lt;/li&gt;
-      &lt;li&gt;no special input file / output device.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Church Turing Thesis : 任何在算法上可計算的問題同樣可由圖靈機計算。&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="turing-machine">Turing Machine</h3>
+<ul>
+  <li>Definition : associated with the tape is a read-write head that can travel right or left.</li>
+  <li>The Turing machine enters a final state and halts, then the string is considered to be accepted.</li>
+  <li>main features :
+    <ul>
+      <li>tape is unbounded in both directions.</li>
+      <li>deterministic.</li>
+      <li>no special input file / output device.</li>
+    </ul>
+  </li>
+  <li>Church Turing Thesis : 任何在算法上可計算的問題同樣可由圖靈機計算。</li>
+</ul>
 
-&lt;h3 id=&quot;recursively-enumerable-languages&quot;&gt;Recursively enumerable Languages&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A language $L$ is said to be recursively enumerable if there exists a Turing machine that accepts it.&lt;/li&gt;
-  &lt;li&gt;There is an &lt;em&gt;enumeration procedure&lt;/em&gt; for every recursively enumerable language.&lt;/li&gt;
-  &lt;li&gt;enumeration procedure : 存在一個 algorithm 可以列出所有 strings in the language.&lt;/li&gt;
-  &lt;li&gt;Recursively enumerable Languages is countable.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="recursively-enumerable-languages">Recursively enumerable Languages</h3>
+<ul>
+  <li>A language $L$ is said to be recursively enumerable if there exists a Turing machine that accepts it.</li>
+  <li>There is an <em>enumeration procedure</em> for every recursively enumerable language.</li>
+  <li>enumeration procedure : 存在一個 algorithm 可以列出所有 strings in the language.</li>
+  <li>Recursively enumerable Languages is countable.</li>
+</ul>
 
-&lt;h3 id=&quot;recursive-languages&quot;&gt;Recursive Languages&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A language is recursive in and only if there exists a &lt;em&gt;membership algorithm&lt;/em&gt; for it.&lt;/li&gt;
-  &lt;li&gt;membership algorithm : 存在一個 algorithm 可以決定該 string 是否屬於 language。&lt;/li&gt;
-  &lt;li&gt;If a language is recursive, then there exists an enumeration procedure.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="recursive-languages">Recursive Languages</h3>
+<ul>
+  <li>A language is recursive in and only if there exists a <em>membership algorithm</em> for it.</li>
+  <li>membership algorithm : 存在一個 algorithm 可以決定該 string 是否屬於 language。</li>
+  <li>If a language is recursive, then there exists an enumeration procedure.</li>
+</ul>
 
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;the family of recursive language is a proper subset of the family of recursively enumerable languages.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
+<blockquote>
+  <ul>
+    <li>the family of recursive language is a proper subset of the family of recursively enumerable languages.</li>
+  </ul>
+</blockquote>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;這邊常用的證明方法 : diagonalization&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>這邊常用的證明方法 : diagonalization</li>
+</ul>
+</details>
 
-&lt;h3 id=&quot;unrestricted-grammars&quot;&gt;Unrestricted Grammars&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A grammar is called unrestricted if all the productions are of the form $u \to v$.&lt;/li&gt;
-  &lt;li&gt;Any number of variables and terminals can be on the left or righting any order.&lt;/li&gt;
-  &lt;li&gt;Any language generated by an unrestricted grammar is &lt;em&gt;recursively enumerable&lt;/em&gt;.&lt;/li&gt;
-  &lt;li&gt;For every recursively enumeration language $L$, there exists an unrestricted grammar $G$, such that $L=L(G)$.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="unrestricted-grammars">Unrestricted Grammars</h3>
+<ul>
+  <li>A grammar is called unrestricted if all the productions are of the form $u \to v$.</li>
+  <li>Any number of variables and terminals can be on the left or righting any order.</li>
+  <li>Any language generated by an unrestricted grammar is <em>recursively enumerable</em>.</li>
+  <li>For every recursively enumeration language $L$, there exists an unrestricted grammar $G$, such that $L=L(G)$.</li>
+</ul>
 
-&lt;h2 id=&quot;context-sensitive-languages-and-linear-bounded-automata&quot;&gt;&lt;a id=&quot;CSL&quot;&gt;&lt;/a&gt;Context-Sensitive Languages and Linear Bounded Automata&lt;/h2&gt;
-&lt;p&gt;Context-free languages，顧名思義就在 derivation 的時候並不考慮上下文，因此根據 definition，there is no terminal on the left of any production.接下來將會介紹根據上下文的 Context-Sensitive Languages。&lt;/p&gt;
+<h2 id="context-sensitive-languages-and-linear-bounded-automata"><a id="CSL"></a>Context-Sensitive Languages and Linear Bounded Automata</h2>
+<p>Context-free languages，顧名思義就在 derivation 的時候並不考慮上下文，因此根據 definition，there is no terminal on the left of any production.接下來將會介紹根據上下文的 Context-Sensitive Languages。</p>
 
-&lt;h3 id=&quot;context-sensitive-grammars&quot;&gt;Context-Sensitive Grammars&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A grammar is called Context-Sensitive if all the productions are of the form $x \to y$, where &lt;script type=&quot;math/tex&quot;&gt;\|x\| \leq \|y\|&lt;/script&gt;.&lt;/li&gt;
-  &lt;li&gt;the length of successive sentential forms can never decrease.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="context-sensitive-grammars">Context-Sensitive Grammars</h3>
+<ul>
+  <li>A grammar is called Context-Sensitive if all the productions are of the form $x \to y$, where \(\|x\| \leq \|y\|\).</li>
+  <li>the length of successive sentential forms can never decrease.</li>
+</ul>
 
-&lt;h3 id=&quot;linear-bounded-automata&quot;&gt;Linear Bounded Automata&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Turing machine with limiting the tape.&lt;/li&gt;
-  &lt;li&gt;For every context-sensitive language $L$ (not including empty string), there exists some linear bounded automata $M$ such that $L=L(M)$.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="linear-bounded-automata">Linear Bounded Automata</h3>
+<ul>
+  <li>Turing machine with limiting the tape.</li>
+  <li>For every context-sensitive language $L$ (not including empty string), there exists some linear bounded automata $M$ such that $L=L(M)$.</li>
+</ul>
 
-&lt;h3 id=&quot;context-sensitive-languages&quot;&gt;Context-Sensitive Languages&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;A language $L$ is said to be context-sensitive if and only if there is a context-sensitive grammar $G$ such that $L=L(G)$.&lt;/li&gt;
-&lt;/ul&gt;
+<h3 id="context-sensitive-languages">Context-Sensitive Languages</h3>
+<ul>
+  <li>A language $L$ is said to be context-sensitive if and only if there is a context-sensitive grammar $G$ such that $L=L(G)$.</li>
+</ul>
 
-&lt;h2 id=&quot;the-chomsky-hierarchy&quot;&gt;&lt;a id=&quot;Chomsky&quot;&gt;&lt;/a&gt;The Chomsky Hierarchy&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Type 0 : recursively enumerable languages (unrestricted grammars).&lt;/li&gt;
-  &lt;li&gt;Type 1 : context-sensitive language.&lt;/li&gt;
-  &lt;li&gt;Type 2 : context-free language.&lt;/li&gt;
-  &lt;li&gt;Type 3 : regular language.&lt;/li&gt;
-&lt;/ul&gt;
+<h2 id="the-chomsky-hierarchy"><a id="Chomsky"></a>The Chomsky Hierarchy</h2>
+<ul>
+  <li>Type 0 : recursively enumerable languages (unrestricted grammars).</li>
+  <li>Type 1 : context-sensitive language.</li>
+  <li>Type 2 : context-free language.</li>
+  <li>Type 3 : regular language.</li>
+</ul>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;Recursive Languages&lt;/li&gt;
-  &lt;li&gt;Linear Languages&lt;/li&gt;
-  &lt;li&gt;Determinitstic Context-Free Languages&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Recursive Languages</li>
+  <li>Linear Languages</li>
+  <li>Determinitstic Context-Free Languages</li>
+</ul>
+</details>
 
-&lt;h2 id=&quot;limits-of-algorithmic-computation&quot;&gt;&lt;a id=&quot;limits&quot;&gt;&lt;/a&gt;Limits of Algorithmic Computation&lt;/h2&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;Computable Functions : It states that a function on the natural numbers can be calculated by an effective method, if and only if it is computable by a Turing machine.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h2 id="limits-of-algorithmic-computation"><a id="limits"></a>Limits of Algorithmic Computation</h2>
+<blockquote>
+  <p>Computable Functions : It states that a function on the natural numbers can be calculated by an effective method, if and only if it is computable by a Turing machine.</p>
+</blockquote>
 
-&lt;p&gt;接下來，我們將會討論那些 Turing machine 無法處理的問題，在討論之前，先介紹幾個概念。&lt;/p&gt;
+<p>接下來，我們將會討論那些 Turing machine 無法處理的問題，在討論之前，先介紹幾個概念。</p>
 
-&lt;h3 id=&quot;computability&quot;&gt;Computability&lt;/h3&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;A function $f$ is said to be computable if there exists a Turing Machine that computes the value of $f$.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h3 id="computability">Computability</h3>
+<blockquote>
+  <p>A function $f$ is said to be computable if there exists a Turing Machine that computes the value of $f$.</p>
+</blockquote>
 
-&lt;h3 id=&quot;decidability&quot;&gt;Decidability&lt;/h3&gt;
-&lt;blockquote&gt;
-  &lt;p&gt;The result of a computation is simple “yes” or “no”, in this case, a problem being decidable or undecidable.&lt;/p&gt;
-&lt;/blockquote&gt;
+<h3 id="decidability">Decidability</h3>
+<blockquote>
+  <p>The result of a computation is simple “yes” or “no”, in this case, a problem being decidable or undecidable.</p>
+</blockquote>
 
-&lt;h4 id=&quot;the-turing-machine-halting-problem&quot;&gt;The Turing Machine Halting Problem&lt;/h4&gt;
-&lt;p&gt;「給定一個 input string 和 Turing Machine，把 string 丟進去 Turing Machine 執行後是否會停在某個 state，抑或是執行後永不停止。」&lt;/p&gt;
+<h4 id="the-turing-machine-halting-problem">The Turing Machine Halting Problem</h4>
+<p>「給定一個 input string 和 Turing Machine，把 string 丟進去 Turing Machine 執行後是否會停在某個 state，抑或是執行後永不停止。」</p>
 
-&lt;p&gt;這個問題是 undecidable，證明方法主要是利用反證法：If halting problem were decidable, then every recursively enumerable language would be recursive. 因為如果知道會不會停止，就可以建構出 membership algorithm，而凡是可以建構出 membership algorithm 的 language 就是 recursive language。&lt;/p&gt;
+<p>這個問題是 undecidable，證明方法主要是利用反證法：If halting problem were decidable, then every recursively enumerable language would be recursive. 因為如果知道會不會停止，就可以建構出 membership algorithm，而凡是可以建構出 membership algorithm 的 language 就是 recursive language。</p>
 
-&lt;p&gt;可以 reduced to Halting Problem 的問題：&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The state-entry Problem : the state is ever entered when applied to input string.&lt;/li&gt;
-  &lt;li&gt;The blank-tape halting Problem : Turing machine halts if started with a blank tape.&lt;/li&gt;
-&lt;/ul&gt;
+<p>可以 reduced to Halting Problem 的問題：</p>
+<ul>
+  <li>The state-entry Problem : the state is ever entered when applied to input string.</li>
+  <li>The blank-tape halting Problem : Turing machine halts if started with a blank tape.</li>
+</ul>
 
-&lt;p&gt;證明的方法就是利用該 Problem 建構出 Halting Problem，但已知 Halting Problem is undecidable，因此該 Problem 也是 undecidable (反證法)。&lt;/p&gt;
+<p>證明的方法就是利用該 Problem 建構出 Halting Problem，但已知 Halting Problem is undecidable，因此該 Problem 也是 undecidable (反證法)。</p>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;Undecidable Problems for Recursively Enumerable Languages&lt;/li&gt;
-  &lt;li&gt;The Post Correspondence Problem&lt;/li&gt;
-  &lt;li&gt;Undecidable Problems for Context-Free Languages&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>Undecidable Problems for Recursively Enumerable Languages</li>
+  <li>The Post Correspondence Problem</li>
+  <li>Undecidable Problems for Context-Free Languages</li>
+</ul>
+</details>
 
-&lt;h2 id=&quot;computational-complexity&quot;&gt;&lt;a id=&quot;complexity&quot;&gt;&lt;/a&gt;Computational Complexity&lt;/h2&gt;
-&lt;p&gt;我們只介紹 P Problem, NP Problem。&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;P Problem : Includes all languages that are accepted by some &lt;em&gt;deterministic&lt;/em&gt; Turing machine in polynomial time. 指的是有明確 polynomial time 的解法 (通常指的是暴力解)。&lt;/li&gt;
-  &lt;li&gt;NP Problem : Includes all languages that are accepted by some &lt;em&gt;nondeterministic&lt;/em&gt; Turing machine in polynomial time. 提供一個解法，可以在 polynomial time 被驗證 (通常暴力解會是 exponential time)。&lt;/li&gt;
-&lt;/ul&gt;
+<h2 id="computational-complexity"><a id="complexity"></a>Computational Complexity</h2>
+<p>我們只介紹 P Problem, NP Problem。</p>
+<ul>
+  <li>P Problem : Includes all languages that are accepted by some <em>deterministic</em> Turing machine in polynomial time. 指的是有明確 polynomial time 的解法 (通常指的是暴力解)。</li>
+  <li>NP Problem : Includes all languages that are accepted by some <em>nondeterministic</em> Turing machine in polynomial time. 提供一個解法，可以在 polynomial time 被驗證 (通常暴力解會是 exponential time)。</li>
+</ul>
 
-&lt;details&gt;
-    &lt;summary&gt;想知道更多？
-&lt;/summary&gt;
-&lt;ul&gt;
-  &lt;li&gt;The SAT problem (NP)&lt;/li&gt;
-  &lt;li&gt;The Hamiltonian Path Problem (NP)&lt;/li&gt;
-  &lt;li&gt;The Clique Problem (NP)&lt;/li&gt;
-  &lt;li&gt;NP-compete Problem&lt;/li&gt;
-  &lt;li&gt;NP-hard Problem&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
+<details>
+    <summary>想知道更多？
+</summary>
+<ul>
+  <li>The SAT problem (NP)</li>
+  <li>The Hamiltonian Path Problem (NP)</li>
+  <li>The Clique Problem (NP)</li>
+  <li>NP-compete Problem</li>
+  <li>NP-hard Problem</li>
+</ul>
+</details>
 
-&lt;h2 id=&quot;resource&quot;&gt;Resource&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;An Introduction to Formal Language and Automata (Peter Linz)&lt;/li&gt;
-  &lt;li&gt;Introduction to Automata Theory, Languages, and Computation (Hopcroft, Motwani, Ullman)&lt;/li&gt;
-  &lt;li&gt;Introduction to the Theory of Computation (Michael Sipser)&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mropengate.blogspot.com/2015/06/formal-language.html&quot;&gt;正規語言Formal Language | Mr. Opengate
-&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev&quot;&gt;Theory of Computation &amp;amp; Automata Theory&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>srhuang</name></author><category term="theory" /><category term="mathematics" /><summary type="html">這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。 Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 ENIAC 則是 1946 的事情了。</summary></entry></feed>
+<h2 id="resource">Resource</h2>
+<ul>
+  <li>An Introduction to Formal Language and Automata (Peter Linz)</li>
+  <li>Introduction to Automata Theory, Languages, and Computation (Hopcroft, Motwani, Ullman)</li>
+  <li>Introduction to the Theory of Computation (Michael Sipser)</li>
+  <li><a href="https://mropengate.blogspot.com/2015/06/formal-language.html">正規語言Formal Language | Mr. Opengate
+</a></li>
+  <li><a href="https://www.youtube.com/playlist?list=PLBlnK6fEyqRgp46KUv4ZY69yXmpwKOIev">Theory of Computation &amp; Automata Theory</a></li>
+</ul>]]></content><author><name>srhuang</name></author><category term="Formal Language" /><category term="theory" /><category term="mathematics" /><summary type="html"><![CDATA[這篇文章只會簡單的介紹 formal language，目的是用最快的速度擁有最粗淺的了解，如果對於這個領域還有興趣，可以再分項一一往下研究。 Turing Machine 在 1936 年由 Alan Turing 提出後，便奠定了現今電腦的基礎，整個 Formal Language 大約是在 1930-1940 年代發展成熟，而人類第一台通用計算機 ENIAC 則是 1946 的事情了。]]></summary></entry></feed>
