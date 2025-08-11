@@ -2,7 +2,7 @@
 layout: page
 title: About Me
 sidebar_link: true
-sidebar_sort_order: 3
+sidebar_sort_order: 4
 ---
 
 ## Work Experience
