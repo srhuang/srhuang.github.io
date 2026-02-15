@@ -4,6 +4,9 @@ title: Reading
 sidebar_link: true
 sidebar_sort_order: 1
 ---
+以下為讀書筆記
+
+* [你所不知道的C語言](https://hackmd.io/@srhuang/ByDnQEUt1l){:target="_blank"}
 
 * [Linux 核心設計](https://hackmd.io/@srhuang/S1nBLU4Kyx){:target="_blank"}
 
