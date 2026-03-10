@@ -7,5 +7,6 @@ sidebar_sort_order: 2
 ### 2025.08
 * [從無到有打造作業系統](https://hackmd.io/@srhuang/BJKaCtl7ee){:target="_blank"}
 
-
+### 2026.03
+* [LC400](https://github.com/srhuang/LC400_cpp){:target="_blank"}
 
